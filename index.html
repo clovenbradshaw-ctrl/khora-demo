@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khora — EO Event Stream</title>
+<style>
+:root{--bg:#f9f9f7;--card:#fff;--bd:#d4d1ca;--bdl:#e8e5df;--tx:#1a1a1a;--tx2:#555;--txm:#888;--txf:#b0a89e;
+--accent:#1a6b4a;--acl:#e8f5ee;--warn:#b44d12;--wbg:#fef7ed;--wbd:#f5deb8;
+--danger:#b91c1c;--dbg:#fef2f2;--dbd:#fecaca;--rec:#6d28d9;--rbg:#f5f0ff;--rbd:#ddd6fe;
+--meant:#4338ca;--mbg:#eef2ff;--mbd:#c7d2fe;--r:5px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:var(--tx);display:flex;height:100vh;overflow:hidden;background:var(--bg);font-size:14px;line-height:1.45}
+
+.lp{width:360px;border-right:1px solid var(--bd);display:flex;flex-direction:column;background:#fff;flex-shrink:0}
+.lp-head{padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.lp-title{font-size:13px;font-weight:600}.lp-ct{font-size:11px;color:var(--txm)}
+.lp-actions{display:flex;gap:3px;padding:5px 14px;border-bottom:1px solid var(--bdl);flex-shrink:0}
+.tz{flex-shrink:0}
+.toast{padding:7px 14px;border-bottom:1px solid var(--bdl);font-size:11px;font-family:'SF Mono',Consolas,monospace;animation:tI .3s ease-out,tO .3s ease-in 2.8s forwards}
+@keyframes tI{from{opacity:0;transform:translateY(-4px)}}@keyframes tO{to{opacity:0;max-height:0;padding:0 14px;overflow:hidden}}
+.ls{flex:1;overflow-y:auto}.ls::-webkit-scrollbar{width:4px}.ls::-webkit-scrollbar-thumb{background:var(--bdl);border-radius:2px}
+.li{display:flex;flex-direction:column}
+.le{padding:3px 14px;border-bottom:1px solid #f5f3ef;font-family:'SF Mono',Consolas,monospace;font-size:10px;line-height:1.5;cursor:pointer;transition:background .1s;display:flex;gap:6px;align-items:baseline}
+.le:hover{background:#fafaf5}.le.active{background:#fffde7;border-left:2px solid var(--warn);padding-left:12px}
+.le-ts{color:var(--txf);width:42px;flex-shrink:0}.le-expr{color:var(--tx2);flex:1;word-break:break-all}.le-detail{color:var(--txf)}
+.le-children{margin-left:16px;border-left:2px solid var(--bdl)}.le-toggle{font-size:9px;color:var(--txm);cursor:pointer;margin-right:2px}
+.op-nul{color:#666}.op-sig{color:#2e7d57}.op-ins{color:#4a5da8}.op-seg{color:#a07000}
+.op-con{color:#8b3a8b}.op-syn{color:#b85c00}.op-alt{color:#0369a1}.op-sup{color:var(--danger)}.op-rec{color:var(--rec)}
+
+.app{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.nav{padding:8px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:#fff}
+.nav-title{font-size:15px;font-weight:700}
+.tabs{display:flex}.tab{padding:5px 14px;font-size:12px;cursor:pointer;border:1px solid var(--bd);background:var(--bg);color:var(--tx2);font-family:inherit}
+.tab:first-child{border-radius:var(--r) 0 0 var(--r)}.tab:last-child{border-radius:0 var(--r) var(--r) 0}
+.tab.on{background:#fff;color:var(--tx);font-weight:600;z-index:1;position:relative}
+
+.scrubber{padding:6px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:#fff;flex-shrink:0}
+.scrubber.past{background:var(--wbg);border-bottom-color:var(--wbd)}
+.scrub-lbl{font-size:11px;color:var(--txm)}.scrub-date{font-weight:600;font-size:12px;min-width:80px}
+.scrubber input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer}
+.b{font-family:inherit;font-size:11px;padding:3px 10px;border:1px solid var(--bd);background:#fff;color:var(--tx2);cursor:pointer;border-radius:var(--r);transition:all .12s}
+.b:hover{background:var(--bg);color:var(--tx)}.b:active{transform:scale(.98)}.b:disabled{opacity:.35;cursor:default;pointer-events:none}
+.b-sm{font-size:10px;padding:2px 7px}.b-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.b-primary:hover{background:#155c3e}
+.scrub-info{font-size:10px;color:var(--warn);font-weight:500}
+
+.rec-banner{padding:10px 20px;background:var(--rbg);border-bottom:1px solid var(--rbd);flex-shrink:0;font-size:12px;color:#444;line-height:1.5}
+.rec-banner b{color:var(--rec)}
+
+.db-toolbar{padding:8px 20px;border-bottom:1px solid var(--bd);display:flex;gap:5px;align-items:center;flex-wrap:wrap;background:#fff;flex-shrink:0}
+.sep{width:1px;height:18px;background:var(--bdl);margin:0 3px}
+.chip{font-family:inherit;font-size:10px;padding:2px 9px;border:1px solid var(--bd);background:#fff;cursor:pointer;border-radius:20px}
+.chip:hover{border-color:var(--txm)}.chip.on{background:var(--tx);color:#fff;border-color:var(--tx)}
+
+.dtabs{display:flex;gap:0;padding:0 20px;background:#fff;border-bottom:1px solid var(--bd);flex-shrink:0}
+.dtab{padding:5px 12px;font-size:11px;cursor:pointer;border:1px solid var(--bd);border-bottom:none;background:var(--bg);color:var(--tx2);margin-bottom:-1px;font-family:inherit}
+.dtab.on{background:#fff;color:var(--tx);font-weight:600}.dtab-x{margin-left:6px;color:var(--txf);cursor:pointer;font-size:10px}
+
+.tw{flex:1;overflow:auto}.tw::-webkit-scrollbar{width:4px;height:4px}.tw::-webkit-scrollbar-thumb{background:var(--bdl);border-radius:2px}
+table{width:100%;border-collapse:collapse;min-width:700px}thead{position:sticky;top:0;z-index:2}
+th{text-align:left;padding:7px 10px;font-size:11px;font-weight:600;color:var(--txm);background:#fafaf8;border-bottom:1px solid var(--bd);white-space:nowrap;cursor:context-menu}
+th:hover{background:#f3f1ec}
+th .tag{font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;margin-left:4px;vertical-align:middle}
+th .tag-g{background:#f5f3ef;color:#78716c;border:1px solid #e0ddd6}
+th .tag-m{background:var(--mbg);color:var(--meant);border:1px solid var(--mbd)}
+td{padding:5px 10px;font-size:13px;border-bottom:1px solid var(--bdl);position:relative;cursor:default}
+tr:hover td{background:#fafaf5}tr.sel td{background:var(--acl)}
+.c-id{font-family:'SF Mono',Consolas,monospace;font-size:10px;color:var(--txf)}
+.c-null{color:var(--txf);font-style:italic;font-size:12px}
+.c-nt{font-size:9px;padding:1px 4px;border-radius:2px;margin-left:4px;font-style:normal;font-weight:500}
+.c-nt-clr{background:#f0ede8;color:#8b7e6e}.c-nt-nc{background:#fef9ec;color:#a07000}
+.c-sup{background:repeating-linear-gradient(135deg,transparent,transparent 4px,#fef2f2 4px,#fef2f2 5px)}.c-sup-tag{font-size:9px;font-weight:600;color:var(--danger);margin-left:4px}
+td.meant-cell{background:var(--mbg);color:var(--meant);font-style:italic;font-size:12px}
+.c-edit{width:100%;padding:3px 6px;border:1.5px solid var(--accent);font-family:inherit;font-size:13px;border-radius:3px;outline:none;background:#fff}.c-edit:focus{box-shadow:0 0 0 2px var(--acl)}
+td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50%);gap:2px}td:hover .ha{display:flex}
+.mb{width:22px;height:22px;border:1px solid var(--bd);background:#fff;border-radius:3px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;color:var(--txm);font-family:inherit}.mb:hover{background:var(--bg);color:var(--tx)}
+.sum-row td{background:#fafaf8;font-size:11px;color:var(--txm);border-top:2px solid var(--bd);font-style:italic}
+.select-cb{width:14px;height:14px;cursor:pointer}
+
+.cmd-bar{padding:8px 20px;border-top:1px solid var(--bd);background:#fff;flex-shrink:0;display:flex;gap:6px;align-items:center}
+.cmd-in{flex:1;font-family:'SF Mono',Consolas,monospace;font-size:12px;padding:6px 10px;border:1px solid var(--bd);border-radius:var(--r);outline:none;background:#fafaf8}
+.cmd-in:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 2px var(--acl)}.cmd-in::placeholder{color:var(--txf)}
+.cmd-result{padding:6px 20px;border-top:1px solid var(--bdl);background:#f0faf4;font-size:12px;color:var(--accent);flex-shrink:0;display:flex;align-items:center;gap:8px}
+.cmd-error{background:var(--dbg);color:var(--danger)}
+.cmd-hint{font-size:10px;color:var(--txf);flex-shrink:0}
+
+.ctx{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:240px;padding:4px 0;font-size:12px}
+.ctx-label{font-size:10px;color:var(--txf);padding:4px 14px 2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.ctx-def{font-size:11px;color:var(--txm);padding:2px 14px 6px;font-style:italic;border-bottom:1px solid var(--bdl);margin-bottom:2px}
+.ctx-fw{font-size:10px;color:var(--meant);padding:2px 14px 4px}
+.ctx-mapping{font-size:10px;color:var(--txf);padding:2px 14px 4px;border-bottom:1px solid var(--bdl)}
+.ctx-item{padding:6px 14px;cursor:pointer;color:var(--tx2)}.ctx-item:hover{background:var(--bg);color:var(--tx)}
+
+/* PROFILE */
+.pw{flex:1;overflow-y:auto;padding:20px;display:none}.pw.on{display:block}
+.pw::-webkit-scrollbar{width:4px}.pw::-webkit-scrollbar-thumb{background:var(--bdl);border-radius:2px}
+.pn{font-size:20px;font-weight:700;margin-bottom:1px}.pm{font-size:12px;color:var(--txm);margin-bottom:16px}
+.pm code{font-family:'SF Mono',Consolas,monospace;font-size:10px;background:#f0ede8;padding:1px 5px;border-radius:3px}
+.attn{padding:8px 12px;border:1px solid var(--dbd);background:var(--dbg);border-radius:var(--r);margin-bottom:14px;font-size:12px;color:#7f1d1d}.attn b{color:var(--danger)}
+.sh{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin:18px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bdl)}
+
+.fb{border:1px solid var(--bdl);border-radius:var(--r);margin-bottom:6px;background:#fff;overflow:hidden}
+.fb.contested{border-color:var(--dbd)}
+.fb-head{padding:6px 10px;background:#fafaf8;border-bottom:1px solid var(--bdl);font-size:11px;font-weight:600;color:var(--tx2)}
+.fb-row{display:flex;align-items:center;padding:5px 10px;min-height:32px;gap:8px;border-bottom:1px solid #f5f3ef}
+.fb-row:last-child{border-bottom:none}
+.fb-tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:2px;flex-shrink:0;width:44px;text-align:center;text-transform:uppercase;letter-spacing:.03em}
+.fb-tag-g{background:#f5f3ef;color:#78716c;border:1px solid #e0ddd6}
+.fb-tag-m{background:var(--mbg);color:var(--meant);border:1px solid var(--mbd)}
+.fb-val{flex:1;font-size:13px}.fb-val.empty{color:var(--txf);font-style:italic;font-size:12px}
+.fb-meta{font-size:10px;color:var(--txf);white-space:nowrap}
+.fb-fw{font-size:10px;color:var(--meant);font-style:italic}
+.fb-acts{display:none;gap:3px;margin-left:auto}.fb-row:hover .fb-acts{display:flex}
+.ine{padding:3px 6px;border:1.5px solid var(--accent);font-family:inherit;font-size:13px;border-radius:3px;outline:none;max-width:220px;width:100%}.ine:focus{box-shadow:0 0 0 2px var(--acl)}
+.sup-blk{padding:6px 10px;background:var(--dbg);border-bottom:1px solid var(--dbd)}
+.sup-t{font-size:10px;font-weight:600;color:var(--danger);margin-bottom:3px}
+.sup-opt{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px}.sup-src{font-size:9px;color:var(--txm)}
+.ht{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px}.ht:hover{text-decoration:underline}
+.cc{padding:4px 10px 8px;background:#fafaf8;font-size:10px;color:var(--txm)}
+.cl-row{padding:2px 0;display:flex;gap:6px;align-items:baseline}
+.cl-op{font-family:'SF Mono',Consolas,monospace;font-size:9px;font-weight:700}.cl-old{text-decoration:line-through;color:var(--txf)}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:#fff;border:1px solid var(--bd);border-radius:8px;padding:22px;width:460px;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.12);max-height:90vh;overflow-y:auto}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:12px}.modal p{font-size:12px;color:var(--tx2);line-height:1.5;margin-bottom:10px}
+.modal label{display:block;font-size:10px;font-weight:600;color:var(--txm);margin:8px 0 3px}
+.modal input,.modal select,.modal textarea{width:100%;padding:6px 10px;border:1px solid var(--bd);font-family:inherit;font-size:13px;border-radius:var(--r);outline:none}
+.modal input:focus,.modal select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--acl)}
+.mfoot{display:flex;gap:6px;margin-top:16px;justify-content:flex-end}
+.map-row{display:flex;gap:6px;align-items:center;font-size:12px;padding:3px 0}.map-row span{color:var(--txm);min-width:160px;font-size:11px}
+.map-row select{width:auto;flex:1}
+</style>
+</head>
+<body>
+
+<div class="lp">
+  <div class="lp-head"><div class="lp-title">Event Log</div><div class="lp-ct" id="evtCt">0</div></div>
+  <div class="lp-actions"><button class="b b-sm" onclick="exportCSV()">State CSV</button><button class="b b-sm" onclick="exportJSON()">State JSON</button><button class="b b-sm" onclick="exportLog()">Full Log</button></div>
+  <div class="tz" id="toasts"></div>
+  <div class="ls"><div class="li" id="logI"></div></div>
+</div>
+<div class="app">
+  <div class="nav"><div class="nav-title">Khora</div><div class="tabs"><button class="tab on" id="tDB" onclick="showV('db')">Database</button><button class="tab" id="tPR" onclick="showV('profile')">Profile</button></div></div>
+  <div id="recBan"></div>
+  <div class="scrubber" id="scrub"></div>
+  <div id="toolbar" class="db-toolbar"></div>
+  <div id="dtabs" class="dtabs" style="display:none"></div>
+  <div class="tw" id="dbV"></div>
+  <div class="pw" id="profV"></div>
+  <div id="cmdRes" style="display:none"></div>
+  <div class="cmd-bar" id="cmdBar">
+    <span class="cmd-hint">EO ▸</span>
+    <input class="cmd-in" id="cmdIn" placeholder='SEG(records, housing="Sleeping in vehicle") · SYN(records, income) · INS(table:referrals)' onkeydown="if(event.key==='Enter')execCmd()">
+    <button class="b b-sm b-primary" onclick="execCmd()">Run</button>
+  </div>
+</div>
+<div id="modalRoot"></div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════════════════
+// GIVEN/MEANT MODEL
+// ═════════════════════════════════════════════════════════════════════════════
+// Given: structured dropdowns of observable conditions
+// Meant: derived classification per a named framework's mapping
+// REC changes the framework (and its mapping), recalculating all Meant values
+
+// Framework = { name, version, mappings: { givenFieldKey: { givenValue → meantValue } } }
+let frameworks = {
+  housing: {
+    name: 'HUD CoC 2024', version: '2024',
+    givenField: 'housing',
+    meantField: 'housing_class',
+    meantLabel: 'Housing classification',
+    mapping: {
+      'Sleeping in vehicle': 'Literally homeless',
+      'Sleeping rough / outdoors': 'Literally homeless',
+      'Shelter, nightly': 'Literally homeless',
+      'Couch-surfing, no lease': 'Unstably housed',
+      'Eviction notice received': 'Unstably housed',
+      'Staying with family, no lease': 'Unstably housed',
+      'Lease on file, stable': 'Stably housed',
+      'Owns home': 'Stably housed',
+      'Institutional (hospital, jail, rehab)': 'Institutional',
+      'Fleeing DV': 'Fleeing DV',
+    },
+    meantValues: ['Literally homeless','Unstably housed','Stably housed','Institutional','Fleeing DV'],
+  },
+  enrollment: {
+    name: 'HUD CoC 2024', version: '2024',
+    givenField: 'enrollment_basis',
+    meantField: 'status',
+    meantLabel: 'Enrollment status',
+    mapping: {
+      'New intake, meets criteria': 'Active',
+      'Referred from partner agency': 'Active',
+      'Enrolled in housing program': 'Enrolled',
+      'Completed program requirements': 'Enrolled',
+      'Non-responsive 30+ days': 'Suspended',
+      'Client declined services': 'Suspended',
+      'Waitlist, pending slot': 'Waitlisted',
+    },
+    meantValues: ['Active','Enrolled','Suspended','Waitlisted'],
+  },
+};
+
+// Schema: Given fields are what workers interact with. Meant fields are derived.
+let fields = [
+  {key:'name', label:'Name', type:'text', layer:'given', def:'Legal or preferred name'},
+  {key:'phone', label:'Phone', type:'text', layer:'given', def:'Primary contact number'},
+  {key:'housing', label:'Housing situation', type:'select', layer:'given', def:'Observed or reported housing condition',
+   opts:['Sleeping in vehicle','Sleeping rough / outdoors','Shelter, nightly','Couch-surfing, no lease','Eviction notice received','Staying with family, no lease','Lease on file, stable','Owns home','Institutional (hospital, jail, rehab)','Fleeing DV']},
+  {key:'housing_class', label:'Housing classification', type:'derived', layer:'meant', def:'HUD Category 1–4', framework:'housing'},
+  {key:'income', label:'Income (monthly)', type:'text', layer:'given', def:'Total monthly income from all sources, USD'},
+  {key:'insurance', label:'Insurance', type:'select', layer:'given', def:'Current health coverage',
+   opts:['TennCare','Private','None','Pending']},
+  {key:'enrollment_basis', label:'Enrollment basis', type:'select', layer:'given', def:'Reason for current enrollment state',
+   opts:['New intake, meets criteria','Referred from partner agency','Enrolled in housing program','Completed program requirements','Non-responsive 30+ days','Client declined services','Waitlist, pending slot']},
+  {key:'status', label:'Enrollment status', type:'derived', layer:'meant', def:'CoC enrollment classification', framework:'enrollment'},
+  {key:'next_step', label:'Next step', type:'text', layer:'given', def:'Agreed action between worker and client'},
+];
+
+// Derive a meant value from a given value through the active framework
+function deriveMeant(frameworkKey, givenValue) {
+  const fw = frameworks[frameworkKey];
+  if (!fw || !givenValue) return null;
+  return fw.mapping[givenValue] || null;
+}
+
+// Custom tables created via EOQL
+let customTables = {}; // key -> {label, fields:[], data:{}}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// EVENTS
+// ═════════════════════════════════════════════════════════════════════════════
+let events = [], evtN = 0, absTypes = {};
+
+function pushEv(op,target,field,value,x={}) {
+  evtN++;
+  const ev = {id:evtN, ts:x.ts||new Date().toISOString(), op, target:target||null, field:field||null,
+    value:value!==undefined?value:null, oldValue:x.oldValue??null,
+    agent:x.agent||'Marta Torres', mode:x.mode||'declared', note:x.note||null,
+    meta:x.meta||null, parentId:x.parentId||null, table:x.table||'records'};
+  events.push(ev);
+  if (!x.ts && !x.silent) showToast(ev);
+  document.getElementById('evtCt').textContent = events.length + ' events';
+  return ev;
+}
+
+function eoN(ev) {
+  const t=ev.target||'',f=ev.field?'.'+ev.field:'';
+  switch(ev.op) {
+    case 'INS': return ev.field ? `INS(${t}${f}, "${trn(ev.value)}")` : `INS(${t})`;
+    case 'NUL': return ev.field ? `NUL(${t}${f})` : `NUL(${t})`;
+    case 'SIG': return ev.target ? `SIG(${t}${f}, "${trn(ev.value)}")` : (ev.meta?.tblSig||`SIG(schema${f})`);
+    case 'ALT': return `ALT(${t}${f}, "${trn(ev.value)}")`;
+    case 'SEG': if(ev.target&&ev.field) return `ALT(SEG(${t}${f}), "${trn(ev.value)}")`;
+               return ev.meta?.filterExpr ? `SEG(records, ${ev.meta.filterExpr})` : `SEG(records)`;
+    case 'SUP': return `SUP(${t}${f}, "${trn(ev.value)}")`;
+    case 'REC': return `REC(${ev.meta?.fwKey||'schema'}${f}, "${trn(ev.value)}")`;
+    case 'CON': return `CON(${t}, ${ev.value})`;
+    case 'SYN': return ev.meta?.expr || `SYN(records)`;
+    default: return `${ev.op}(${t}${f})`;
+  }
+}
+function trn(s){return s&&s.length>28?s.slice(0,26)+'…':s||'';}
+function eoD(ev){if(ev.note){const n=ev.note;if(n===ev.value||n===`${ev.oldValue} → ${ev.value}`)return'';return n;}return'';}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// LIVE DATA (source of truth for "now")
+// ═════════════════════════════════════════════════════════════════════════════
+let liveData = {}; // uid -> {field: value}
+
+function liveSet(uid, field, value) {
+  if (!liveData[uid]) liveData[uid] = {};
+  liveData[uid][field] = value;
+  // Auto-derive meant fields
+  const fDef = fields.find(f=>f.key===field);
+  if (fDef?.layer === 'given') {
+    for (const [fwKey, fw] of Object.entries(frameworks)) {
+      if (fw.givenField === field) {
+        const meant = deriveMeant(fwKey, value);
+        liveData[uid][fw.meantField] = meant;
+      }
+    }
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SEED
+// ═════════════════════════════════════════════════════════════════════════════
+function seed() {
+  const T=(m,d)=>`2024-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}T09:00:00Z`;
+  const p=(op,t,f,v,x)=>pushEv(op,t,f,v,{ts:x?.ts||T(8,15),...x});
+  p('SIG',null,null,'schema',{ts:T(8,10),meta:{tblSig:'SIG(table:records, 9 fields)'}});
+
+  const ppl = [
+    {a:'@001a',n:'Hassan, Aaliya',ph:'615-555-0147',h:'Couch-surfing, no lease',inc:'$980',ins:'TennCare',eb:'New intake, meets criteria',ns:'Follow up on housing voucher'},
+    {a:'@002b',n:'Park, James',ph:'615-555-0283',h:'Lease on file, stable',inc:'$2,100',ins:'Private',eb:'Enrolled in housing program',ns:'Benefits renewal'},
+    {a:'@003c',n:'Okafor, Nneka',ph:'615-555-0391',h:'Sleeping in vehicle',inc:'$640',ins:'None',eb:'New intake, meets criteria',ns:'Shelter intake referral'},
+    {a:'@004d',n:'Torres, Miguel',ph:'615-555-0455',h:'Eviction notice received',inc:'$1,200',ins:'TennCare',eb:'Non-responsive 30+ days',ns:'Re-engagement outreach'},
+    {a:'@005e',n:'Williams, DeShawn',ph:null,h:'Staying with family, no lease',inc:'$1,850',ins:'TennCare',eb:'New intake, meets criteria',ns:'Employment check-in'},
+  ];
+
+  ppl.forEach((r,i)=>{
+    const t = T(8,15+i);
+    p('INS',r.a,null,r.n,{ts:t});
+    liveData[r.a] = {};
+    const vals = {name:r.n, phone:r.ph, housing:r.h, income:r.inc, insurance:r.ins, enrollment_basis:r.eb, next_step:r.ns};
+    Object.entries(vals).forEach(([k,v])=>{
+      if (v) { p('SIG',r.a,k,v,{ts:t}); liveSet(r.a,k,v); }
+      else { p('NUL',r.a,k,null,{ts:t}); absTypes[r.a+'.'+k]='not-collected'; }
+    });
+    // Emit the derived meant values
+    const hc = deriveMeant('housing', r.h);
+    if (hc) p('SIG',r.a,'housing_class',hc,{ts:t,mode:'inferred',agent:'System'});
+    const st = deriveMeant('enrollment', r.eb);
+    if (st) p('SIG',r.a,'status',st,{ts:t,mode:'inferred',agent:'System'});
+  });
+
+  // Aaliya history
+  p('ALT','@001a','housing','Sleeping in vehicle',{ts:T(10,22),agent:'Crisis Team',mode:'observed',oldValue:'Couch-surfing, no lease'});
+  liveSet('@001a','housing','Sleeping in vehicle');
+  p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:'System',mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
+
+  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Marta Torres',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
+  liveSet('@001a','housing','Couch-surfing, no lease');
+  p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:'System',mode:'inferred',oldValue:'Literally homeless'});
+
+  p('ALT','@001a','income','$980',{ts:T(12,2),agent:'Aaliya Hassan',mode:'declared',oldValue:'$1,240',note:'Hours reduced'});
+  liveData['@001a'].income='$980';
+
+  p('SUP','@001a','income','$1,100',{ts:'2025-01-10T09:00:00Z',agent:'Benefits System',mode:'measured',oldValue:'$980',note:'Verification discrepancy'});
+
+  p('CON','@001a',null,'@003c',{ts:T(9,20),note:'Emergency contact'});
+}
+seed();
+
+// ═════════════════════════════════════════════════════════════════════════════
+// REPLAY (for time scrubbing)
+// ═════════════════════════════════════════════════════════════════════════════
+function replayTo(idx) {
+  const cut = idx >= events.length ? events : events.slice(0,idx);
+  const recs={}, sups={}, conns=[];
+  let fws = JSON.parse(JSON.stringify(frameworks));
+
+  // Undo future RECs
+  if (idx < events.length) {
+    events.slice(idx).filter(e=>e.op==='REC'&&e.meta?.fwRestore).forEach(r=>{
+      const rest = r.meta.fwRestore;
+      if (fws[rest.key]) { fws[rest.key].name=rest.oldName; fws[rest.key].mapping=rest.oldMapping; fws[rest.key].meantValues=rest.oldMeantValues; }
+    });
+  }
+
+  cut.forEach(ev=>{
+    if (ev.table && ev.table!=='records') return; // skip custom table events for main replay
+    if (ev.op==='INS'&&ev.target&&!ev.field) recs[ev.target]={uid:ev.target,_name:ev.value};
+    if (['SIG','ALT','INS'].includes(ev.op)&&ev.target&&ev.field) {
+      if (!recs[ev.target]) recs[ev.target]={uid:ev.target};
+      recs[ev.target][ev.field]=ev.value;
+      delete sups[ev.target+'.'+ev.field];
+    }
+    if (ev.op==='NUL'&&ev.target&&ev.field) { if(recs[ev.target])recs[ev.target][ev.field]=null; delete sups[ev.target+'.'+ev.field]; }
+    if (ev.op==='NUL'&&ev.target&&!ev.field) delete recs[ev.target];
+    if (ev.op==='SUP'&&ev.target&&ev.field) sups[ev.target+'.'+ev.field]={a:{value:ev.oldValue,agent:'prior'},b:{value:ev.value,agent:ev.agent,mode:ev.mode}};
+    if (ev.op==='CON') conns.push({from:ev.target,to:ev.value,note:ev.note});
+    if (ev.op==='REC'&&ev.meta?.fwRestore) {
+      const r=ev.meta.fwRestore;
+      if(fws[r.key]){fws[r.key].name=r.newName;fws[r.key].mapping=r.newMapping;fws[r.key].meantValues=r.newMeantValues;}
+      // Recompute meant values for all records under new mapping
+      Object.values(recs).forEach(rec=>{
+        const fw=fws[r.key];if(!fw)return;
+        const gv=rec[fw.givenField];
+        rec[fw.meantField]=gv?fw.mapping[gv]||null:null;
+      });
+    }
+  });
+
+  // Build stacks
+  const stacks={};
+  cut.filter(e=>e.target&&e.field&&['SIG','ALT','NUL','SUP','INS'].includes(e.op)&&(!e.table||e.table==='records')).forEach(ev=>{
+    if(!stacks[ev.target])stacks[ev.target]={};
+    if(!stacks[ev.target][ev.field])stacks[ev.target][ev.field]=[];
+    stacks[ev.target][ev.field].push({value:ev.value,agent:ev.agent,mode:ev.mode,ts:ev.ts,op:ev.op,note:ev.note,oldValue:ev.oldValue});
+  });
+
+  return {records:Object.values(recs), sups, conns, stacks, frameworks:fws};
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═════════════════════════════════════════════════════════════════════════════
+let view='db', scrubPos=events.length, selectedProfile=null, selectedRows=new Set(), activeFilter='all', editCell=null, expFields={}, recBanner=null;
+let derivedViews=[]; let activeTab='records'; let cmdResult=null;
+const isNow=()=>scrubPos>=events.length;
+const getS=()=>replayTo(isNow()?events.length:scrubPos);
+
+// ═════════════════════════════════════════════════════════════════════════════
+// LOG RENDERING
+// ═════════════════════════════════════════════════════════════════════════════
+function renderLog(){
+  const el=document.getElementById('logI');el.innerHTML='';
+  const top=events.filter(e=>!e.parentId);
+  top.slice().reverse().forEach(ev=>{
+    const kids=events.filter(e=>e.parentId===ev.id);
+    const d=document.createElement('div');
+    d.innerHTML=mkLE(ev,kids.length>0)+(kids.length?`<div class="le-children" id="lc_${ev.id}" style="display:none">${kids.map(c=>mkLE(c,false)).join('')}</div>`:'');
+    el.appendChild(d);
+  });
+}
+function mkLE(ev,hasKids){
+  const dt=new Date(ev.ts);const ts=isNaN(dt)?'':`${dt.getMonth()+1}/${dt.getDate()}`;
+  const tog=hasKids?`<span class="le-toggle" onclick="event.stopPropagation();const e=document.getElementById('lc_${ev.id}');e.style.display=e.style.display==='none'?'block':'none'">▸</span>`:'';
+  const n=esc(eoN(ev));const colored=n.replace(/^(\w+)/,`<span class="op-${ev.op.toLowerCase()}">$1</span>`);
+  const det=eoD(ev);
+  return`<div class="le${scrubPos===ev.id?' active':''}" onclick="scrubPos=${ev.id};render()"><span class="le-ts">${ts}</span>${tog}<span class="le-expr">${colored}${det?` <span class="le-detail">${esc(det)}</span>`:''}</span></div>`;
+}
+function showToast(ev){
+  const z=document.getElementById('toasts');const d=document.createElement('div');d.className='toast';
+  const n=esc(eoN(ev));d.innerHTML=n.replace(/^(\w+)/,`<span class="op-${ev.op.toLowerCase()}">$1</span>`);
+  z.appendChild(d);while(z.children.length>2)z.removeChild(z.firstChild);
+  setTimeout(()=>{if(d.parentNode)d.remove();},3200);
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// RENDER
+// ═════════════════════════════════════════════════════════════════════════════
+function showV(v){view=v;document.getElementById('tDB').classList.toggle('on',v==='db');document.getElementById('tPR').classList.toggle('on',v==='profile');
+  ['toolbar','dbV','cmdBar'].forEach(id=>document.getElementById(id).style.display=v==='db'?'':'none');
+  document.getElementById('profV').className='pw'+(v==='profile'?' on':'');render();}
+
+function render(){
+  renderScrubber();renderRecBan();renderLog();renderDTabs();
+  if(view==='db')renderDB();else renderProfile();
+  const re=document.getElementById('cmdRes');
+  if(!cmdResult){re.style.display='none';}else{re.style.display='flex';re.className='cmd-result'+(cmdResult.error?' cmd-error':'');re.innerHTML=cmdResult.text+`<button class="b b-sm" style="margin-left:auto" onclick="cmdResult=null;render()">×</button>`;}
+}
+
+function renderScrubber(){
+  const el=document.getElementById('scrub');const now=isNow();
+  el.className='scrubber'+(now?'':' past');
+  el.innerHTML=`<span class="scrub-lbl">Viewing:</span><span class="scrub-date">${now?'Today':fmtDate(events[scrubPos-1]?.ts)}</span>
+    <input type=range min=1 max=${events.length} value=${now?events.length:scrubPos} oninput="scrubPos=+this.value>=events.length?events.length:+this.value;render()">
+    <button class="b b-sm${now?' b-primary':''}" onclick="scrubPos=events.length;render()">Now</button>
+    ${!now?`<button class="b b-sm" onclick="scrubPos=Math.max(1,scrubPos-1);render()">←</button><button class="b b-sm" onclick="scrubPos=Math.min(events.length,scrubPos+1);render()">→</button><span class="scrub-info">Event ${scrubPos}/${events.length}</span>`:''}`;
+}
+function renderRecBan(){const el=document.getElementById('recBan');if(!recBanner||!isNow()){el.innerHTML='';return;}el.innerHTML=`<div class="rec-banner"><button class="b b-sm" style="float:right" onclick="recBanner=null;render()">Dismiss</button>${recBanner}</div>`;}
+function renderDTabs(){
+  const el=document.getElementById('dtabs');
+  if(!derivedViews.length){el.style.display='none';return;}
+  el.style.display='flex';
+  el.innerHTML=`<div class="dtab${activeTab==='records'?' on':''}" onclick="activeTab='records';render()">All Records</div>`+
+    derivedViews.map(v=>`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()">${esc(v.name)}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`).join('');
+  Object.keys(customTables).forEach(k=>{
+    el.innerHTML+=`<div class="dtab${activeTab===k?' on':''}" onclick="activeTab='${k}';render()">${esc(customTables[k].label)}</div>`;
+  });
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// DATABASE VIEW
+// ═════════════════════════════════════════════════════════════════════════════
+function renderDB(){
+  const S=getS();const past=!isNow();
+  const givenFields=fields.filter(f=>f.layer==='given');
+  const meantFields=fields.filter(f=>f.layer==='meant');
+  const allFields=[...givenFields,...meantFields];
+
+  // Handle derived views / custom tables
+  let recs, displayFields;
+  if(activeTab!=='records') {
+    const dv=derivedViews.find(v=>v.id===activeTab);
+    if(dv){recs=dv.records;displayFields=allFields;}
+    else if(customTables[activeTab]){recs=Object.values(customTables[activeTab].data||{}).map((d,i)=>({uid:Object.keys(customTables[activeTab].data)[i],...d}));displayFields=customTables[activeTab].fields;} 
+    else{activeTab='records';recs=S.records;displayFields=allFields;}
+  } else {
+    recs=activeFilter==='all'?S.records:S.records.filter(r=>{const st=r.status;return st===activeFilter;});
+    displayFields=allFields;
+  }
+
+  const meantVals=meantFields.map(f=>f.key);
+  const statuses=['all',...new Set(S.records.map(r=>r.status).filter(Boolean))];
+
+  document.getElementById('toolbar').innerHTML=`
+    ${!past&&activeTab==='records'?`<button class="b" onclick="addRecord()">+ Add record</button>
+    <button class="b" onclick="addField()">+ Add field</button>
+    <button class="b" onclick="linkRows()" ${selectedRows.size<2?'disabled':''}>Link selected</button>
+    <div class="sep"></div>`:''}
+    ${statuses.length>1&&activeTab==='records'?`<span style="font-size:10px;color:var(--txm)">Filter:</span>${statuses.map(s=>`<button class="chip${activeFilter===s?' on':''}" onclick="activeFilter='${s}';render()">${s}</button>`).join('')}`:''}`;
+
+  document.getElementById('dbV').innerHTML=`<table>
+    <thead><tr>
+      ${!past&&activeTab==='records'?'<th style="width:28px"></th>':''}
+      <th>Unique ID</th>
+      ${displayFields.map(f=>{
+        const isMeant=f.layer==='meant';
+        const tag=isMeant?'<span class="tag tag-m">meant</span>':'<span class="tag tag-g">given</span>';
+        return`<th oncontextmenu="showCtx(event,'${f.key}')">${esc(f.label)}${tag}</th>`;
+      }).join('')}
+      ${!past&&activeTab==='records'?'<th style="width:28px"></th>':''}
+    </tr></thead>
+    <tbody>
+    ${recs.map(r=>{
+      const sel=selectedRows.has(r.uid);
+      return`<tr class="${sel?'sel':''}" ondblclick="selectedProfile='${r.uid}';showV('profile')">
+        ${!past&&activeTab==='records'?`<td><input type=checkbox class=select-cb ${sel?'checked':''} onchange="if(selectedRows.has('${r.uid}'))selectedRows.delete('${r.uid}');else selectedRows.add('${r.uid}');renderDB()"></td>`:''}
+        <td class="c-id">${r.uid}</td>
+        ${displayFields.map(f=>{
+          const val=r[f.key], sk=r.uid+'.'+f.key, isSup=!!S.sups[sk], isMeant=f.layer==='meant';
+
+          // Meant fields: read-only, derived
+          if(isMeant){
+            const fwKey=f.framework;const fw=S.frameworks[fwKey];
+            return`<td class="meant-cell" oncontextmenu="showCtx(event,'${f.key}')">${val?esc(val):'<span class="c-null">—</span>'}${fw?` <span style="font-size:9px;color:var(--mbd)">${fw.name}</span>`:''}</td>`;
+          }
+
+          // Editing
+          if(editCell?.uid===r.uid&&editCell?.field===f.key){
+            if(f.type==='select')return`<td><select class=c-edit onchange="commitEd('${r.uid}','${f.key}',this.value)" onblur="setTimeout(()=>{if(editCell){editCell=null;render();}},0)">${f.opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select></td>`;
+            return`<td><input class=c-edit value="${esc(val||'')}" id=edI onkeydown="if(event.key==='Enter')commitEd('${r.uid}','${f.key}',this.value);if(event.key==='Escape'){editCell=null;render()}" onblur="setTimeout(()=>commitEd('${r.uid}','${f.key}',this.value),0)"></td>`;
+          }
+          if(val==null){
+            const at=absTypes[sk];const lbl=at==='cleared'?'recorded absent':'not yet collected';const cls=at==='cleared'?'c-nt-clr':'c-nt-nc';
+            return`<td class="c-null"${!past?` ondblclick="startEd('${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span></td>`;
+          }
+          return`<td class="${isSup?'c-sup':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')"`:''}>${esc(val)}${isSup?'<span class=c-sup-tag>conflict</span>':''}${!past?`<span class=ha><button class=mb onclick="startEd('${r.uid}','${f.key}')">✎</button></span>`:''}</td>`;
+        }).join('')}
+        ${!past&&activeTab==='records'?`<td><button class=mb onclick="pushEv('NUL','${r.uid}');delete liveData['${r.uid}'];scrubPos=events.length;render()">×</button></td>`:''}
+      </tr>`;
+    }).join('')}
+    <tr class="sum-row"><td colspan="${!past&&activeTab==='records'?2:1}">${recs.length} records</td>
+      ${displayFields.map(f=>{
+        if(f.key==='income'){const ns=recs.map(r=>parseFloat((r.income||'').replace(/[^0-9.]/g,''))).filter(n=>!isNaN(n));return`<td>avg $${ns.length?Math.round(ns.reduce((a,b)=>a+b,0)/ns.length):'—'}</td>`;}
+        return'<td></td>';
+      }).join('')}
+      ${!past&&activeTab==='records'?'<td></td>':''}
+    </tr></tbody></table>`;
+}
+
+function startEd(uid,field){if(!isNow())return;const f=fields.find(x=>x.key===field);if(f?.layer==='meant')return;editCell={uid,field};renderDB();setTimeout(()=>{const i=document.getElementById('edI');if(i){i.focus();i.select();}},30);}
+
+function commitEd(uid,field,newVal){
+  if(!editCell){render();return;} editCell=null;
+  const old=liveData[uid]?.[field];
+  if(old===newVal){render();return;}
+  const f=fields.find(x=>x.key===field);
+
+  if(old==null){
+    pushEv('INS',uid,field,newVal);
+    delete absTypes[uid+'.'+field];
+  } else if(f?.type==='select'&&old!==newVal){
+    pushEv('SEG',uid,field,newVal,{oldValue:old});
+    pushEv('ALT',uid,field,newVal,{oldValue:old});
+  } else {
+    pushEv('ALT',uid,field,newVal,{oldValue:old});
+  }
+  liveSet(uid,field,newVal);
+
+  // If this is a given field with a framework, emit the derived meant change
+  for(const[fwKey,fw]of Object.entries(frameworks)){
+    if(fw.givenField===field){
+      const oldMeant=old?fw.mapping[old]||null:null;
+      const newMeant=newVal?fw.mapping[newVal]||null:null;
+      if(oldMeant!==newMeant){
+        pushEv('ALT',uid,fw.meantField,newMeant,{oldValue:oldMeant,agent:'System',mode:'inferred',note:`Derived: ${newVal} → ${newMeant} per ${fw.name}`});
+      }
+    }
+  }
+
+  scrubPos=events.length;render();
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// CONTEXT MENU → REC
+// ═════════════════════════════════════════════════════════════════════════════
+window.showCtx=(e,fk)=>{
+  e.preventDefault();const f=fields.find(x=>x.key===fk);if(!f)return;
+  const d=document.createElement('div');d.className='ctx';d.id='ctxM';
+  d.style.left=Math.min(e.clientX,innerWidth-260)+'px';d.style.top=Math.min(e.clientY,innerHeight-200)+'px';
+
+  let extra='';
+  if(f.layer==='meant'&&f.framework){
+    const fw=frameworks[f.framework];
+    if(fw){
+      extra+=`<div class="ctx-fw">Framework: <b>${fw.name}</b></div>`;
+      extra+=`<div class="ctx-mapping">Mapping:<br>${Object.entries(fw.mapping).map(([k,v])=>`${k} → <b>${v}</b>`).join('<br>')}</div>`;
+      if(isNow())extra+=`<div class="ctx-item" onclick="openREC('${f.framework}');document.getElementById('ctxM')?.remove()">↬ Change framework (REC)</div>`;
+    }
+  }
+  if(f.layer==='given'&&f.opts){
+    extra+=`<div class="ctx-mapping">Values: ${f.opts.join(', ')}</div>`;
+  }
+
+  d.innerHTML=`<div class="ctx-label">${esc(f.label)} <span style="font-size:8px;color:${f.layer==='meant'?'var(--meant)':'#78716c'}">${f.layer}</span></div>
+    <div class="ctx-def">${esc(f.def)}</div>${extra}
+    <div class="ctx-item" onclick="document.getElementById('ctxM')?.remove()">Close</div>`;
+  document.body.appendChild(d);
+  setTimeout(()=>document.addEventListener('click',function h(e2){if(!d.contains(e2.target)){d.remove();document.removeEventListener('click',h);}},10));
+};
+
+window.openREC=(fwKey)=>{
+  const fw=frameworks[fwKey];if(!fw)return;
+  const givenF=fields.find(f=>f.key===fw.givenField);
+  const givenOpts=givenF?.opts||Object.keys(fw.mapping);
+  const currentMeantVals=fw.meantValues;
+
+  document.getElementById('modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal">
+    <h3>↬ Change Framework (REC)</h3>
+    <p>This changes how <b>${esc(givenF?.label||fw.givenField)}</b> observations get classified.
+    The Given values (what workers record) stay the same. The Meant values (the classification) will be recalculated under the new framework.</p>
+    <label>Current framework</label>
+    <div style="padding:6px 10px;background:var(--rbg);border:1px solid var(--rbd);border-radius:4px;font-size:12px;color:var(--txm);font-style:italic">${esc(fw.name)}</div>
+    <label>New framework name</label>
+    <input id="recFW" placeholder="e.g. State Housing Stability Index 2025" value="${esc(fw.name)}">
+    <label>New classification values (comma-separated)</label>
+    <input id="recMV" value="${currentMeantVals.join(', ')}">
+    <label>Mapping: Given observation → New classification</label>
+    <div id="recMapDiv">${givenOpts.map(opt=>{
+      const cur=fw.mapping[opt]||'';
+      return`<div class="map-row"><span>${esc(opt)} →</span><select data-given="${esc(opt)}">
+        ${currentMeantVals.map(v=>`<option${v===cur?' selected':''}>${v}</option>`).join('')}
+      </select></div>`;
+    }).join('')}</div>
+    <label>Reason</label>
+    <input id="recR" placeholder="e.g. State policy update 2025-Q2">
+    <div class="mfoot"><button class="b" onclick="closeModal()">Cancel</button><button class="b b-primary" onclick="doREC('${fwKey}')">Apply new framework</button></div>
+  </div></div>`;
+
+  // Update selects when meant values change
+  document.getElementById('recMV').addEventListener('input',function(){
+    const newVals=this.value.split(',').map(s=>s.trim()).filter(Boolean);
+    document.querySelectorAll('#recMapDiv select').forEach(sel=>{
+      const cur=sel.value;
+      sel.innerHTML=newVals.map(v=>`<option${v===cur?' selected':''}>${v}</option>`).join('');
+    });
+  });
+};
+
+window.doREC=(fwKey)=>{
+  const fw=frameworks[fwKey];
+  const newName=document.getElementById('recFW').value.trim()||fw.name;
+  const newMeantVals=document.getElementById('recMV').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const reason=document.getElementById('recR').value.trim()||'Framework change';
+
+  // Build new mapping
+  const newMapping={};
+  document.querySelectorAll('#recMapDiv select').forEach(sel=>{
+    newMapping[sel.dataset.given]=sel.value;
+  });
+
+  // Store restore info for time travel
+  const fwRestore={
+    key:fwKey,
+    oldName:fw.name, oldMapping:{...fw.mapping}, oldMeantValues:[...fw.meantValues],
+    newName, newMapping, newMeantValues:newMeantVals,
+  };
+
+  // Apply to framework
+  const oldName=fw.name;
+  fw.name=newName; fw.mapping=newMapping; fw.meantValues=newMeantVals;
+
+  // Update meant field def
+  const meantF=fields.find(f=>f.key===fw.meantField);
+  const oldDef=meantF?.def;
+  if(meantF)meantF.def=`${newName} classification`;
+
+  // Emit REC event
+  const recEv=pushEv('REC',null,fw.meantField,newName,{
+    note:`Framework: ${oldName} → ${newName} (${reason})`,
+    meta:{fwKey,fwRestore,reason}
+  });
+
+  // Recompute all meant values from given values
+  Object.entries(liveData).forEach(([uid,data])=>{
+    const givenVal=data[fw.givenField];
+    const oldMeant=data[fw.meantField];
+    const newMeant=givenVal?newMapping[givenVal]||null:null;
+    if(oldMeant!==newMeant){
+      pushEv('ALT',uid,fw.meantField,newMeant,{oldValue:oldMeant,agent:'System',mode:'inferred',parentId:recEv.id,silent:true,note:`Reclassified: ${oldMeant} → ${newMeant}`});
+      data[fw.meantField]=newMeant;
+    }
+  });
+
+  recBanner=`<b>REC(${fwKey})</b> — Framework changed from "${esc(oldName)}" to "${esc(newName)}". All classifications recalculated from unchanged Given observations. Reason: ${esc(reason)}.`;
+  closeModal();scrubPos=events.length;render();
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ADD RECORD / FIELD / LINK
+// ═════════════════════════════════════════════════════════════════════════════
+window.addRecord=()=>{
+  const givenFields=fields.filter(f=>f.layer==='given').slice(0,6);
+  openModal('New Record — Given Observations',givenFields.map(f=>({key:f.key,label:f.label,type:f.type==='select'?'select':'text',opts:f.opts})),vals=>{
+    const uid='@'+String(events.length).padStart(3,'0')+Math.random().toString(36)[2];
+    liveData[uid]={};
+    pushEv('INS',uid,null,vals.name||'Unnamed');
+    fields.forEach(f=>{
+      if(f.layer==='meant')return;
+      if(vals[f.key]){pushEv('SIG',uid,f.key,vals[f.key]);liveSet(uid,f.key,vals[f.key]);
+        // Emit derived meant
+        for(const[fwKey,fw]of Object.entries(frameworks)){
+          if(fw.givenField===f.key){const m=deriveMeant(fwKey,vals[f.key]);if(m)pushEv('SIG',uid,fw.meantField,m,{agent:'System',mode:'inferred'});}
+        }
+      } else absTypes[uid+'.'+f.key]='not-collected';
+    });
+    scrubPos=events.length;render();
+  });
+};
+
+window.addField=()=>{
+  openModal('Add Given Field',[{key:'label',label:'Field name',type:'text'},{key:'def',label:'Definition',type:'text'},{key:'opts',label:'Dropdown values (comma-separated, or blank for text)',type:'text'}],vals=>{
+    if(!vals.label)return;const key=vals.label.toLowerCase().replace(/\s+/g,'_');
+    if(fields.find(f=>f.key===key))return;
+    const opts=vals.opts?vals.opts.split(',').map(s=>s.trim()).filter(Boolean):null;
+    fields.push({key,label:vals.label,type:opts?'select':'text',layer:'given',def:vals.def||'',opts});
+    pushEv('SIG',null,key,vals.label);
+    scrubPos=events.length;render();
+  });
+};
+
+window.linkRows=()=>{const arr=Array.from(selectedRows);if(arr.length<2)return;pushEv('CON',arr[0],null,arr[1],{note:'Linked'});selectedRows.clear();scrubPos=events.length;render();};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// COMMAND BAR
+// ═════════════════════════════════════════════════════════════════════════════
+window.execCmd=()=>{const raw=document.getElementById('cmdIn').value.trim();if(!raw)return;document.getElementById('cmdIn').value='';
+  try{cmdResult={text:parseCMD(raw),error:false};}catch(e){cmdResult={text:e.message,error:true};}scrubPos=events.length;render();};
+
+function parseCMD(raw){
+  const m=raw.match(/^(\w+)\((.+)\)$/s);if(!m)throw new Error('Format: OPERATOR(target, operand)');
+  const op=m[1].toUpperCase();const args=splitArgs(m[2]);const S=getS();
+  switch(op){
+    case'SEG':{
+      const filter=args[1];if(!filter)throw new Error('SEG(records, field="value")');
+      const pf=parseFilter(filter);
+      const filtered=S.records.filter(r=>{const v=r[pf.field];if(v==null)return false;if(pf.op==='=')return String(v)===pf.value;if(pf.op==='>')return parseFloat(String(v).replace(/[^0-9.]/g,''))>parseFloat(pf.value);return false;});
+      pushEv('SEG',null,null,filter,{meta:{filterExpr:filter}});
+      derivedViews.push({id:'seg_'+Date.now(),name:filter,records:filtered});activeTab=derivedViews[derivedViews.length-1].id;
+      return`${filtered.length} records → "${filter}"`;
+    }
+    case'SYN':{
+      let recs=S.records;
+      const nested=args[0].match(/^SEG\((.+)\)$/i);
+      if(nested){const inner=splitArgs(nested[1]);const pf=parseFilter(inner[1]);recs=S.records.filter(r=>{const v=r[pf.field];return v!=null&&String(v)===pf.value;});}
+      const field=args[args.length-1].trim();
+      const vals=recs.map(r=>parseFloat(String(r[field]||'').replace(/[^0-9.]/g,''))).filter(n=>!isNaN(n));
+      if(!vals.length)throw new Error(`No numeric values for "${field}"`);
+      const sum=vals.reduce((a,b)=>a+b,0);const avg=Math.round(sum/vals.length);
+      const result=`count: ${vals.length}, sum: $${sum.toLocaleString()}, avg: $${avg.toLocaleString()}`;
+      pushEv('SYN',null,field,result,{meta:{expr:raw}});return result;
+    }
+    case'INS':{
+      const target=args[0].trim();
+      if(target.startsWith('table:')){
+        const name=target.replace('table:','');
+        customTables[name]={label:name,fields:[],data:{}};
+        pushEv('INS',target,null,name,{table:name});activeTab=name;
+        return`Table "${name}" created. Use SIG(table:${name}.field, "definition") to add fields.`;
+      }
+      const uid='@'+String(events.length).padStart(3,'0')+Math.random().toString(36)[2];
+      const name=args[1]?.replace(/"/g,'')||'';
+      liveData[uid]={name};pushEv('INS',uid,null,name||uid);
+      return`INS(${uid})`;
+    }
+    case'SIG':{
+      const tblField=args[0].trim().match(/^table:(\w+)\.(\w+)$/);
+      if(tblField){
+        const tbl=tblField[1],fld=tblField[2];
+        if(!customTables[tbl])throw new Error(`Table "${tbl}" not found. INS(table:${tbl}) first.`);
+        const def=args[1]?.replace(/"/g,'')||'';
+        customTables[tbl].fields.push({key:fld,label:fld,type:'text',layer:'given',def});
+        pushEv('SIG',null,fld,fld,{table:tbl,meta:{tblSig:`SIG(table:${tbl}.${fld})`}});
+        return`Field "${fld}" added to ${tbl}`;
+      }
+      const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);
+      if(dotM){pushEv('SIG',dotM[1],dotM[2],args[1]?.replace(/"/g,'')||'');liveSet(dotM[1],dotM[2],args[1]?.replace(/"/g,'')||'');return`SIG(${args[0].trim()})`;}
+      throw new Error('SIG(table:name.field, "def") or SIG(@uid.field, "value")');
+    }
+    case'ALT':{
+      const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);const nv=args[1]?.replace(/"/g,'');
+      if(!dotM||!nv)throw new Error('ALT(@uid.field, "value")');
+      const f=fields.find(x=>x.key===dotM[2]);
+      if(f?.layer==='meant')throw new Error(`${dotM[2]} is a Meant field — it's derived. Change the Given observation instead, or use REC to change the framework.`);
+      const r=S.records.find(x=>x.uid===dotM[1]);if(!r)throw new Error(`${dotM[1]} not found. INS first.`);
+      if(r[dotM[2]]==null)throw new Error(`${dotM[1]}.${dotM[2]} has no value. INS first.`);
+      const old=r[dotM[2]];pushEv('ALT',dotM[1],dotM[2],nv,{oldValue:old});liveSet(dotM[1],dotM[2],nv);
+      // Auto-derive
+      for(const[fwKey,fw]of Object.entries(frameworks)){if(fw.givenField===dotM[2]){const om=fw.mapping[old]||null;const nm=fw.mapping[nv]||null;if(om!==nm)pushEv('ALT',dotM[1],fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred'});}}
+      return`${old} → ${nv}`;
+    }
+    case'CON':{if(args.length<2)throw new Error('CON(@uid1, @uid2)');pushEv('CON',args[0].trim(),null,args[1].trim(),{note:args[2]?.replace(/"/g,'')||'linked'});return'Linked';}
+    case'SUP':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);const v=args[1]?.replace(/"/g,'');if(!dotM||!v)throw new Error('SUP(@uid.field, "value")');const f=fields.find(x=>x.key===dotM[2]);if(f?.layer==='meant')throw new Error('SUP only applies to Given fields. Meant fields are derived.');const r=S.records.find(x=>x.uid===dotM[1]);if(!r)throw new Error(`${dotM[1]} not found`);pushEv('SUP',dotM[1],dotM[2],v,{agent:'External',mode:'measured',oldValue:r[dotM[2]]});return'Conflict held';}
+    case'NUL':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(dotM){pushEv('NUL',dotM[1],dotM[2]);absTypes[dotM[1]+'.'+dotM[2]]='cleared';if(liveData[dotM[1]])liveData[dotM[1]][dotM[2]]=null;return'Absence recorded';}pushEv('NUL',args[0].trim());delete liveData[args[0].trim()];return'Entity removed';}
+    case'REC':{const fwKey=Object.keys(frameworks).find(k=>args[0].trim().includes(k));if(fwKey){openREC(fwKey);return'Opening REC dialog...';}throw new Error('REC(housing) or REC(enrollment)');}
+    case'SOURCE':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(!dotM)throw new Error('SOURCE(@uid.field)');const st=S.stacks[dotM[1]]?.[dotM[2]];if(!st?.length)return'No claims found';return st.map(c=>`${c.op}("${c.value||'∅'}") by ${c.agent}, ${c.mode}`).join(' → ');}
+    default:throw new Error(`Unknown: ${op}`);
+  }
+}
+
+function splitArgs(raw){const args=[];let d=0,cur='',q=false;for(const c of raw){if(c==='"')q=!q;if(!q&&c==='(')d++;if(!q&&c===')')d--;if(!q&&c===','&&d===0){args.push(cur.trim());cur='';}else cur+=c;}if(cur.trim())args.push(cur.trim());return args;}
+function parseFilter(s){const m=s.trim().match(/^(\w+)\s*(=|>|<|!=)\s*"?([^"]*)"?$/);if(!m)throw new Error(`Can't parse: ${s}`);return{field:m[1],op:m[2],value:m[3]};}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// PROFILE VIEW
+// ═════════════════════════════════════════════════════════════════════════════
+function renderProfile(){
+  const el=document.getElementById('profV');
+  if(!selectedProfile){el.innerHTML='<div style="padding:40px;color:var(--txm);text-align:center">Double-click a row to open.</div>';return;}
+  const S=getS();const r=S.records.find(x=>x.uid===selectedProfile);
+  if(!r){el.innerHTML=`<div style="padding:40px"><button class="b" onclick="showV('db')">← Back</button><p style="margin-top:10px;color:var(--txm)">Doesn't exist at this point.</p></div>`;return;}
+  const past=!isNow();const stacks=S.stacks[r.uid]||{};
+
+  let attn='';
+  if(!past){const items=[];Object.keys(S.sups).forEach(k=>{if(!k.startsWith(r.uid+'.'))return;const fk=k.split('.')[1];items.push(fields.find(f=>f.key===fk)?.label||fk);});
+  if(items.length)attn=`<div class="attn"><b>Needs attention:</b> ${items.join(', ')} — conflicting sources</div>`;}
+
+  const conns=S.conns.filter(c=>c.from===r.uid||c.to===r.uid);
+  let connH='';if(conns.length)connH=`<div class="sh">Connections</div>${conns.map(c=>{const o=c.from===r.uid?c.to:c.from;const oR=S.records.find(x=>x.uid===o);return`<div style="font-size:12px;padding:3px 0">${esc(oR?.name||o)} <span style="color:var(--txm);font-style:italic">${esc(c.note)}</span></div>`;}).join('')}`;
+
+  // Group given fields with their derived meant fields
+  const givenFields=fields.filter(f=>f.layer==='given');
+  let fH='';
+
+  givenFields.forEach(gf=>{
+    // Find if there's a framework deriving from this given field
+    let meantField=null, fwObj=null;
+    for(const[fwKey,fw]of Object.entries(S.frameworks)){
+      if(fw.givenField===gf.key){meantField=fields.find(f=>f.key===fw.meantField);fwObj=fw;break;}
+    }
+
+    const val=r[gf.key];const sk=r.uid+'.'+gf.key;const isSup=!!S.sups[sk];
+    const stack=stacks[gf.key]||[];const latest=stack.length?stack[stack.length-1]:null;
+    const prior=stack.length>1?stack.slice(0,-1):[];const exp=expFields[sk];
+
+    let givenH;
+    if(editCell?.uid===r.uid&&editCell?.field===gf.key){
+      if(gf.type==='select')givenH=`<select class=ine onchange="commitEd('${r.uid}','${gf.key}',this.value)" onblur="setTimeout(()=>{if(editCell){editCell=null;render();}},0)">${gf.opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select>`;
+      else givenH=`<input class=ine value="${esc(val||'')}" id=pEI onkeydown="if(event.key==='Enter')commitEd('${r.uid}','${gf.key}',this.value);if(event.key==='Escape'){editCell=null;render()}" onblur="setTimeout(()=>commitEd('${r.uid}','${gf.key}',this.value),0)">`;
+    } else if(val==null){
+      const at=absTypes[sk];
+      givenH=`<span class="fb-val empty">${at==='cleared'?'Recorded absent':'Not yet collected'}</span>`;
+    } else {
+      givenH=`<span class="fb-val">${esc(val)}</span>`;
+    }
+
+    const meta=latest?`<span class="fb-meta">${esc(latest.agent)} · ${latest.mode} · ${fmtDate(latest.ts)}</span>`:'';
+    const acts=!past&&!editCell?`<span class="fb-acts"><button class=mb onclick="editCell={uid:'${r.uid}',field:'${gf.key}'};render();setTimeout(()=>{const i=document.getElementById('pEI');if(i){i.focus();i.select();}},30)">✎</button>${val!=null?`<button class=mb onclick="pushEv('NUL','${r.uid}','${gf.key}');absTypes['${r.uid}.${gf.key}']='cleared';if(liveData['${r.uid}'])liveData['${r.uid}']['${gf.key}']=null;scrubPos=events.length;render()">∅</button>`:''}</span>`:'';
+
+    let layers=`<div class="fb-row"><span class="fb-tag fb-tag-g">given</span>${givenH}${meta}${acts}</div>`;
+
+    // SUP
+    if(isSup){const s=S.sups[sk];layers+=`<div class="sup-blk"><div class="sup-t">Conflicting sources</div>
+      <div class="sup-opt"><div>${esc(s.a.value)} <span class="sup-src">${s.a.agent}</span></div>${!past?`<button class="b b-sm" onclick="pushEv('ALT','${r.uid}','${gf.key}','${esc(s.a.value)}');liveSet('${r.uid}','${gf.key}','${esc(s.a.value)}');scrubPos=events.length;render()">Accept</button>`:''}</div>
+      <div class="sup-opt"><div>${esc(s.b.value)} <span class="sup-src">${s.b.agent}</span></div>${!past?`<button class="b b-sm" onclick="pushEv('ALT','${r.uid}','${gf.key}','${esc(s.b.value)}');liveSet('${r.uid}','${gf.key}','${esc(s.b.value)}');scrubPos=events.length;render()">Accept</button>`:''}</div></div>`;}
+
+    // History
+    if(prior.length){
+      layers+=`<div style="padding-left:54px"><button class="ht" onclick="expFields['${sk}']=!expFields['${sk}'];render()">${exp?'Hide':'Show'} ${prior.length} prior</button></div>`;
+      if(exp)layers+=`<div class="cc" style="margin-left:54px">${prior.reverse().map(c=>`<div class="cl-row"><span class="cl-op op-${c.op.toLowerCase()}">${c.op}</span><span class="cl-old">${esc(c.value||'∅')}</span><span>${esc(c.agent)} · ${c.mode} · ${fmtDate(c.ts)}${c.note?' · '+esc(c.note):''}</span></div>`).join('')}</div>`;
+    }
+
+    // Meant layer (read-only, derived)
+    if(meantField&&fwObj){
+      const meantVal=r[meantField.key];
+      layers+=`<div class="fb-row" style="background:var(--mbg)"><span class="fb-tag fb-tag-m">meant</span>
+        <span class="fb-val">${meantVal?esc(meantVal):'<span class="empty">Not classified</span>'}</span>
+        <span class="fb-fw">per ${fwObj.name}</span></div>`;
+    }
+
+    const label=meantField?`${gf.label} → ${meantField.label}`:gf.label;
+    fH+=`<div class="fb${isSup?' contested':''}"><div class="fb-head">${esc(label)}</div>${layers}</div>`;
+  });
+
+  el.innerHTML=`<div style="margin-bottom:10px"><button class="b" onclick="showV('db')">← Back</button></div>
+    <div class="pn">${esc(r.name||'Unnamed')}</div><div class="pm"><code>${r.uid}</code></div>
+    ${attn}${connH}<div class="sh">Observations & Classifications</div>${fH}`;
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// EXPORTS / MODAL / UTILS
+// ═════════════════════════════════════════════════════════════════════════════
+window.exportCSV=()=>{const S=getS();const allF=fields.map(f=>f.key);const cols=['uid',...allF];let csv=cols.join(',')+'\n';S.records.forEach(r=>{csv+=cols.map(c=>{const v=r[c];return v==null?'':'"'+String(v).replace(/"/g,'""')+'"';}).join(',')+'\n';});dl('khora-state.csv',csv,'text/csv');};
+window.exportJSON=()=>{const S=getS();dl('khora-state.json',JSON.stringify({exported:new Date().toISOString(),frameworks:S.frameworks,schema:fields,records:S.records,conflicts:S.sups},null,2),'application/json');};
+window.exportLog=()=>{dl('khora-log.json',JSON.stringify({exported:new Date().toISOString(),events:events.length,frameworks,schema:fields,log:events.map(ev=>({...ev,eo:eoN(ev)}))},null,2),'application/json');};
+function dl(n,c,m){const b=new Blob([c],{type:m});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);}
+
+function openModal(title,flds,cb){
+  document.getElementById('modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal"><h3>${title}</h3>
+    ${flds.map(f=>{if(f.type==='select')return`<label>${f.label}</label><select id="mf_${f.key}">${f.opts.map(o=>`<option>${o}</option>`).join('')}</select>`;return`<label>${f.label}</label><input id="mf_${f.key}" placeholder="${f.label}">`;}).join('')}
+    <div class="mfoot"><button class="b" onclick="closeModal()">Cancel</button><button class="b b-primary" onclick="doMS()">Save</button></div></div></div>`;
+  document.getElementById('modalRoot')._cb=cb;document.getElementById('modalRoot')._fs=flds;
+  setTimeout(()=>{const i=document.getElementById('modalRoot').querySelector('input');if(i)i.focus();},100);
+}
+window.doMS=()=>{const r=document.getElementById('modalRoot');const v={};r._fs.forEach(f=>{const el=document.getElementById('mf_'+f.key);v[f.key]=el?el.value:'';});r._cb(v);closeModal();};
+window.closeModal=()=>{document.getElementById('modalRoot').innerHTML='';};
+
+function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmtDate(ts){const d=new Date(ts);return isNaN(d)?String(ts):d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+
+render();
+</script>
+</body>
+</html>
