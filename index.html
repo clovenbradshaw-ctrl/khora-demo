@@ -267,7 +267,7 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
   <div id="cmdRes" style="display:none"></div>
   <div class="cmd-bar" id="cmdBar">
     <span class="cmd-hint">EO ▸</span>
-    <input class="cmd-in" id="cmdIn" placeholder='SEG(records, housing="Sleeping in vehicle") · SYN(records, income) · INS(table:referrals)' onkeydown="acKey(event)" oninput="acUpdate()" onfocus="acUpdate()" onblur="setTimeout(acClose,150)">
+    <input class="cmd-in" id="cmdIn" placeholder='Type an operator or press Tab for suggestions…' onkeydown="acKey(event)" oninput="acUpdate()" onfocus="acUpdate()" onblur="setTimeout(acClose,150)">
     <button class="b b-sm b-primary" onclick="execCmd()">Run</button>
     <div class="ac-drop" id="acDrop"></div>
   </div>
