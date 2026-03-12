@@ -85,19 +85,24 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .cmd-error{background:var(--dbg);color:var(--danger)}
 .cmd-hint{font-size:10px;color:var(--txf);flex-shrink:0}
 
-.ac-drop{position:absolute;bottom:100%;left:20px;right:80px;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 -4px 16px rgba(0,0,0,.1);max-height:260px;overflow-y:auto;z-index:50;display:none;padding:4px 0}
-.ac-drop.open{display:block}
-.ac-drop::-webkit-scrollbar{width:4px}.ac-drop::-webkit-scrollbar-thumb{background:var(--bdl);border-radius:2px}
-.ac-cat{font-size:9px;font-weight:700;color:var(--txf);padding:6px 12px 2px;text-transform:uppercase;letter-spacing:.05em}
-.ac-item{padding:5px 12px;cursor:pointer;display:flex;align-items:baseline;gap:8px;font-size:12px;transition:background .08s}
-.ac-item:hover,.ac-item.sel{background:var(--acl);color:var(--tx)}
-.ac-item .ac-key{font-family:'SF Mono',Consolas,monospace;font-weight:600;color:var(--accent);min-width:60px;font-size:11px}
-.ac-item .ac-lbl{color:var(--tx2);font-size:11px;flex:1}
-.ac-item .ac-tag{font-size:9px;padding:1px 5px;border-radius:2px;font-weight:600}
-.ac-tag-op{background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe}
-.ac-tag-col{background:#f5f3ef;color:#78716c;border:1px solid #e0ddd6}
-.ac-tag-val{background:#e8f5ee;color:#15613e;border:1px solid #b7e4c7}
-.ac-tag-meant{background:var(--mbg);color:var(--meant);border:1px solid var(--mbd)}
+.ac-drop{position:absolute;bottom:calc(100% + 4px);left:20px;right:80px;background:#fff;border:1px solid #e0ddd8;border-radius:8px;box-shadow:0 -2px 8px rgba(0,0,0,.06),0 -8px 24px rgba(0,0,0,.08);max-height:320px;overflow-y:auto;z-index:50;display:none;padding:6px 0}
+.ac-drop.open{display:block;animation:acIn .12s ease-out}
+@keyframes acIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.ac-drop::-webkit-scrollbar{width:5px}.ac-drop::-webkit-scrollbar-thumb{background:#d4d1ca;border-radius:4px}.ac-drop::-webkit-scrollbar-thumb:hover{background:#b0a89e}
+.ac-grp{font-size:10px;font-weight:600;color:#9ca3af;padding:10px 14px 4px;text-transform:uppercase;letter-spacing:.06em}
+.ac-grp:not(:first-child){border-top:1px solid #f0ede8;margin-top:4px;padding-top:10px}
+.ac-item{padding:7px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-radius:6px;margin:1px 6px;transition:background .06s}
+.ac-item:hover,.ac-item.sel{background:#f3f4f6}
+.ac-item.sel{background:#eff6ff}
+.ac-ico{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:700;font-family:'SF Mono',Consolas,monospace}
+.ac-ico-op{background:#eef2ff;color:#6366f1}.ac-ico-text{background:#f0fdf4;color:#22c55e}.ac-ico-select{background:#fefce8;color:#ca8a04}
+.ac-ico-derived{background:var(--mbg);color:var(--meant)}.ac-ico-val{background:#f0fdf4;color:#15803d}.ac-ico-entity{background:#fdf2f8;color:#db2777}
+.ac-ico-table{background:#f0f9ff;color:#0284c7}.ac-ico-fw{background:var(--rbg);color:var(--rec)}
+.ac-body{flex:1;min-width:0}
+.ac-name{font-size:13px;font-weight:500;color:#1f2937;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-desc{font-size:11px;color:#9ca3af;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-hint{font-family:'SF Mono',Consolas,monospace;font-size:10px;color:#c4b5a4;flex-shrink:0;white-space:nowrap}
+.ac-empty{padding:16px 14px;text-align:center;font-size:12px;color:#9ca3af;font-style:italic}
 
 .ctx{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:240px;padding:4px 0;font-size:12px}
 .ctx-label{font-size:10px;color:var(--txf);padding:4px 14px 2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
@@ -1073,171 +1078,163 @@ function fmtDate(ts){const d=new Date(ts);return isNaN(d)?String(ts):d.toLocaleS
 // EOQL AUTOCOMPLETE
 // ═════════════════════════════════════════════════════════════════════════════
 const acOps = [
-  {key:'SEG', label:'Segment — filter records', hint:'SEG(records, field="value")'},
-  {key:'SYN', label:'Synthesize — aggregate numeric field', hint:'SYN(records, field)'},
-  {key:'INS', label:'Insert — create entity or table', hint:'INS(@uid) or INS(table:name)'},
-  {key:'SIG', label:'Signal — set field value', hint:'SIG(@uid.field, "value")'},
-  {key:'ALT', label:'Alternate — change observation', hint:'ALT(@uid.field, "new")'},
-  {key:'NUL', label:'Null — clear / delete', hint:'NUL(@uid.field)'},
-  {key:'SUP', label:'Supersede — hold conflict', hint:'SUP(@uid.field, "value")'},
-  {key:'CON', label:'Connect — link entities', hint:'CON(@uid1, @uid2)'},
-  {key:'REC', label:'Recalculate — change framework', hint:'REC(housing) or REC(enrollment)'},
+  {key:'SEG', label:'Segment', desc:'Filter records by field conditions', hint:'SEG(records, field="value")'},
+  {key:'SYN', label:'Synthesize', desc:'Aggregate a numeric field across records', hint:'SYN(records, field)'},
+  {key:'INS', label:'Insert', desc:'Create a new entity or table', hint:'INS(@uid) or INS(table:name)'},
+  {key:'SIG', label:'Signal', desc:'Set a field value on an entity', hint:'SIG(@uid.field, "value")'},
+  {key:'ALT', label:'Alternate', desc:'Change an existing observation', hint:'ALT(@uid.field, "new")'},
+  {key:'NUL', label:'Null', desc:'Clear a field or remove an entity', hint:'NUL(@uid.field)'},
+  {key:'SUP', label:'Supersede', desc:'Hold a conflicting claim on a field', hint:'SUP(@uid.field, "value")'},
+  {key:'CON', label:'Connect', desc:'Link two entities together', hint:'CON(@uid1, @uid2)'},
+  {key:'REC', label:'Recalculate', desc:'Change the active framework mapping', hint:'REC(housing)'},
 ];
 
-let acSel = 0; // selected index in dropdown
-let acItems = []; // current suggestion list
+let acSel = 0;
+let acItems = [];
+
+// Icon characters for each suggestion type
+function acIcon(type, fieldDef) {
+  if (type === 'op') return 'fn';
+  if (type === 'val') return '=';
+  if (type === 'entity') return '@';
+  if (type === 'table') return '⊞';
+  if (type === 'fw') return '↬';
+  if (!fieldDef) return 'A';
+  if (fieldDef.layer === 'meant') return 'ƒ';
+  if (fieldDef.type === 'select') return '▾';
+  return 'A';
+}
+function acIconClass(type, fieldDef) {
+  if (type === 'op') return 'ac-ico-op';
+  if (type === 'val') return 'ac-ico-val';
+  if (type === 'entity') return 'ac-ico-entity';
+  if (type === 'table') return 'ac-ico-table';
+  if (type === 'fw') return 'ac-ico-fw';
+  if (!fieldDef) return 'ac-ico-text';
+  if (fieldDef.layer === 'meant') return 'ac-ico-derived';
+  if (fieldDef.type === 'select') return 'ac-ico-select';
+  return 'ac-ico-text';
+}
+
+// Build a suggestion item
+function acItem(type, insert, display, desc, hint, fieldDef, group) {
+  return {type, insert, display, desc: desc||'', hint: hint||'', fieldDef: fieldDef||null, group: group||''};
+}
 
 // Determine what to suggest based on cursor context
 function acSuggest(raw, cursor) {
-  // 1) No input or cursor at start → suggest operators
-  if (!raw || cursor === 0) return acOps.map(o => ({type:'op', insert:o.key+'(', display:o.key, desc:o.label, tag:'op'}));
+  if (!raw || cursor === 0) return acOps.map(o => acItem('op', o.key+'(', o.key, o.desc, o.hint, null, 'Operators'));
 
   const before = raw.slice(0, cursor);
 
-  // 2) Typing an operator name (no open paren yet)
+  // Typing an operator name (no open paren yet)
   const opMatch = before.match(/^(\w*)$/i);
   if (opMatch) {
     const q = opMatch[1].toUpperCase();
     return acOps.filter(o => o.key.startsWith(q) || (q.length > 0 && o.key.includes(q)))
-      .map(o => ({type:'op', insert:o.key+'(', display:o.key, desc:o.label, tag:'op'}));
+      .map(o => acItem('op', o.key+'(', o.key, o.desc, o.hint, null, 'Operators'));
   }
 
-  // 3) Inside an operator's parentheses
+  // Inside an operator's parentheses
   const opCtx = before.match(/^(\w+)\((.*)$/is);
   if (!opCtx) return [];
   const op = opCtx[1].toUpperCase();
   const inner = opCtx[2];
-
-  // Gather UIDs for @-mention suggestions
   const uids = Object.keys(liveData);
 
-  // --- SEG context ---
+  // Helper: build field suggestions
+  function fieldItems(q, subset, group) {
+    return (subset || fields).filter(f => f.key.includes(q) || f.label.toLowerCase().includes(q))
+      .map(f => acItem('col', f.key, f.label, f.key, f.type === 'select' ? f.opts?.length+' options' : f.type, f, group || (f.layer === 'meant' ? 'Derived fields' : 'Fields')));
+  }
+
+  // Helper: build value suggestions for a field
+  function valItems(fKey, partial, hasQuote, group) {
+    const f = fields.find(x => x.key === fKey) || fields.find(x => x.label.toLowerCase().replace(/\s+/g,'_') === fKey);
+    if (!f) return [];
+    let vals = f.opts ? f.opts : [...new Set(Object.values(liveData).map(d => d[f.key]).filter(Boolean).map(String))];
+    if (partial) vals = vals.filter(v => v.toLowerCase().includes(partial.toLowerCase()));
+    return vals.map(v => acItem('val', hasQuote ? v+'"' : '"'+v+'"', v, f.label, '', f, group || 'Values'));
+  }
+
+  // Helper: build entity suggestions
+  function entityItems(q, suffix, group) {
+    return uids.filter(u => u.toLowerCase().includes(q.toLowerCase()))
+      .map(u => acItem('entity', u+suffix, liveData[u]?.name || u, u, '', null, group || 'Records'));
+  }
+
+  // --- SEG ---
   if (op === 'SEG') {
-    // After "SEG(records, " → suggest field names for filter
     const afterComma = inner.match(/^[^,]*,\s*(.*)$/);
     if (afterComma) {
-      const filterPart = afterComma[1];
-      // After field= or field=" → suggest values for that field
-      const valMatch = filterPart.match(/^(\w+)\s*[=!><]+\s*"?([^"]*)$/);
+      const fp = afterComma[1];
+      const valMatch = fp.match(/^(\w+)\s*[=!><]+\s*"?([^"]*)$/);
       if (valMatch) {
-        const fKey = valMatch[1];
-        const partial = valMatch[2].toLowerCase();
-        const f = fields.find(x => x.key === fKey) || fields.find(x => x.label.toLowerCase().replace(/\s+/g,'_') === fKey);
-        if (f && f.opts) {
-          // Need to figure out if there's already a quote
-          const hasQuote = filterPart.match(/[=!><]+\s*"[^"]*$/);
-          return f.opts.filter(v => v.toLowerCase().includes(partial))
-            .map(v => ({type:'val', insert: hasQuote ? v+'"' : '"'+v+'"', display:v, desc:f.label+' value', tag:'val'}));
-        }
-        // For text fields, suggest known values from live data
-        if (f) {
-          const vals = [...new Set(Object.values(liveData).map(d => d[f.key]).filter(Boolean))];
-          return vals.filter(v => String(v).toLowerCase().includes(partial))
-            .map(v => ({type:'val', insert: hasQuote ? v+'"' : '"'+v+'"', display:v, desc:f.label+' value', tag:'val'}));
-        }
+        const hasQuote = !!fp.match(/[=!><]+\s*"[^"]*$/);
+        return valItems(valMatch[1], valMatch[2], hasQuote);
       }
-      // Typing a field name for filter
-      const fieldPartial = filterPart.match(/^(\w*)$/);
-      if (fieldPartial) {
-        const q = fieldPartial[1].toLowerCase();
-        return fields.filter(f => f.layer === 'given')
-          .filter(f => f.key.includes(q) || f.label.toLowerCase().includes(q))
-          .map(f => ({type:'col', insert:f.key, display:f.label, desc:f.key, tag: f.layer === 'meant' ? 'meant' : 'col'}));
-      }
+      const fieldP = fp.match(/^(\w*)$/);
+      if (fieldP) return fieldItems(fieldP[1].toLowerCase(), fields.filter(f => f.layer === 'given'), 'Filter by field');
       return [];
     }
-    // Before the comma — suggest "records" or table names
     const tblQ = inner.toLowerCase();
-    const tables = [{key:'records',label:'records — main entity table'},...Object.keys(customTables).map(k=>({key:k,label:k+' — custom table'}))];
-    return tables.filter(t => t.key.includes(tblQ))
-      .map(t => ({type:'col', insert:t.key+', ', display:t.key, desc:t.label, tag:'col'}));
+    const tables = [{k:'records',l:'Main entity table'},...Object.keys(customTables).map(k=>({k,l:'Custom table'}))];
+    return tables.filter(t => t.k.includes(tblQ))
+      .map(t => acItem('table', t.k+', ', t.k, t.l, '', null, 'Tables'));
   }
 
-  // --- SYN context ---
+  // --- SYN ---
   if (op === 'SYN') {
-    // After comma → suggest numeric fields
     const afterComma = inner.match(/^[^,]*,\s*(\w*)$/);
-    if (afterComma) {
-      const q = afterComma[1].toLowerCase();
-      return fields.filter(f => f.layer === 'given' && f.type === 'text')
-        .filter(f => f.key.includes(q) || f.label.toLowerCase().includes(q))
-        .map(f => ({type:'col', insert:f.key, display:f.label, desc:f.key, tag:'col'}));
-    }
-    // Before comma → suggest records or SEG(
+    if (afterComma) return fieldItems(afterComma[1].toLowerCase(), fields.filter(f => f.layer === 'given' && f.type === 'text'), 'Numeric fields');
     const q = inner.toLowerCase();
-    const opts = [{key:'records',label:'main table'},{key:'SEG(',label:'nested filter'}];
-    return opts.filter(o => o.key.toLowerCase().includes(q))
-      .map(o => ({type:'col', insert:o.key+(o.key==='records'?', ':' '), display:o.key, desc:o.label, tag:'col'}));
+    const opts = [
+      acItem('table', 'records, ', 'records', 'Main entity table', '', null, 'Source'),
+      acItem('op', 'SEG( ', 'SEG(…)', 'Nested filter first', '', null, 'Source'),
+    ];
+    return opts.filter(o => o.display.toLowerCase().includes(q));
   }
 
-  // --- REC context ---
+  // --- REC ---
   if (op === 'REC') {
     const q = inner.toLowerCase();
     return Object.entries(frameworks)
       .filter(([k,fw]) => k.includes(q) || fw.name.toLowerCase().includes(q))
-      .map(([k,fw]) => ({type:'col', insert:k+')', display:k, desc:fw.name, tag:'col'}));
+      .map(([k,fw]) => acItem('fw', k+')', k, fw.name, fw.version, null, 'Frameworks'));
   }
 
-  // --- INS context ---
+  // --- INS ---
   if (op === 'INS') {
     const q = inner.toLowerCase();
-    const opts = [
-      {insert:'table:', display:'table:', desc:'Create a new custom table'},
-      {insert:'@', display:'@uid', desc:'Create a new entity'},
-    ];
-    return opts.filter(o => o.insert.toLowerCase().includes(q) || q.length === 0)
-      .map(o => ({...o, type:'op', tag:'op'}));
+    return [
+      acItem('table', 'table:', 'table:name', 'Create a new custom table', '', null, 'Insert'),
+      acItem('entity', '@', '@uid', 'Create a new entity record', '', null, 'Insert'),
+    ].filter(o => o.insert.toLowerCase().includes(q) || q.length === 0);
   }
 
-  // --- SIG / ALT / NUL / SUP / SOURCE — @uid.field context ---
+  // --- SIG / ALT / NUL / SUP ---
   if (['SIG','ALT','NUL','SUP'].includes(op)) {
-    // After @uid. → suggest field names
     const dotMatch = inner.match(/^(@\w+)\.(\w*)$/);
     if (dotMatch) {
       const q = dotMatch[2].toLowerCase();
-      const targetFields = (op === 'SUP') ? fields.filter(f => f.layer === 'given') : fields;
-      return targetFields
-        .filter(f => f.key.includes(q) || f.label.toLowerCase().includes(q))
-        .map(f => ({type:'col', insert:f.key, display:f.label, desc:f.key, tag: f.layer === 'meant' ? 'meant' : 'col'}));
+      const subset = (op === 'SUP') ? fields.filter(f => f.layer === 'given') : fields;
+      return fieldItems(q, subset, 'Fields on ' + dotMatch[1]);
     }
-    // After @uid.field, " → suggest values
     const valMatch = inner.match(/^(@\w+)\.(\w+)\s*,\s*"?([^"]*)$/);
     if (valMatch) {
-      const fKey = valMatch[2];
-      const partial = valMatch[3].toLowerCase();
-      const f = fields.find(x => x.key === fKey);
-      if (f && f.opts) {
-        const hasQuote = inner.match(/,\s*"[^"]*$/);
-        return f.opts.filter(v => v.toLowerCase().includes(partial))
-          .map(v => ({type:'val', insert: hasQuote ? v+'"' : '"'+v+'"', display:v, desc:f.label+' value', tag:'val'}));
-      }
-      if (f) {
-        const vals = [...new Set(Object.values(liveData).map(d => d[f.key]).filter(Boolean))];
-        const hasQuote = inner.match(/,\s*"[^"]*$/);
-        return vals.filter(v => String(v).toLowerCase().includes(partial))
-          .map(v => ({type:'val', insert: hasQuote ? v+'"' : '"'+v+'"', display:String(v), desc:f.label+' value', tag:'val'}));
-      }
+      const hasQuote = !!inner.match(/,\s*"[^"]*$/);
+      return valItems(valMatch[2], valMatch[3], hasQuote);
     }
-    // Typing @ → suggest UIDs
     const atMatch = inner.match(/^(@?\w*)$/);
-    if (atMatch) {
-      const q = atMatch[1].toLowerCase();
-      return uids.filter(u => u.toLowerCase().includes(q))
-        .map(u => ({type:'col', insert:u+'.', display:u, desc:liveData[u]?.name || 'entity', tag:'col'}));
-    }
+    if (atMatch) return entityItems(atMatch[1], '.', 'Records');
   }
 
-  // --- CON context ---
+  // --- CON ---
   if (op === 'CON') {
     const afterComma = inner.match(/^[^,]*,\s*(@?\w*)$/);
-    if (afterComma) {
-      const q = afterComma[1].toLowerCase();
-      return uids.filter(u => u.toLowerCase().includes(q))
-        .map(u => ({type:'col', insert:u, display:u, desc:liveData[u]?.name || 'entity', tag:'col'}));
-    }
-    const q = inner.toLowerCase();
-    return uids.filter(u => u.toLowerCase().includes(q))
-      .map(u => ({type:'col', insert:u+', ', display:u, desc:liveData[u]?.name || 'entity', tag:'col'}));
+    if (afterComma) return entityItems(afterComma[1], '', 'Link to');
+    const q = inner;
+    return entityItems(q, ', ', 'Records');
   }
 
   return [];
@@ -1249,16 +1246,32 @@ function acRender(items) {
   acItems = items;
   if (acSel >= items.length) acSel = 0;
 
-  const tagClass = {op:'ac-tag-op',col:'ac-tag-col',val:'ac-tag-val',meant:'ac-tag-meant'};
-  const tagLabel = {op:'operator',col:'field',val:'value',meant:'derived'};
-  drop.innerHTML = items.map((it, i) =>
-    `<div class="ac-item${i===acSel?' sel':''}" data-idx="${i}" onmousedown="acPick(${i})">
-      <span class="ac-key">${esc(it.display)}</span>
-      <span class="ac-lbl">${esc(it.desc)}</span>
-      <span class="ac-tag ${tagClass[it.tag]||'ac-tag-col'}">${tagLabel[it.tag]||it.tag}</span>
-    </div>`
-  ).join('');
+  // Group items
+  let html = '';
+  let lastGroup = '';
+  items.forEach((it, i) => {
+    if (it.group && it.group !== lastGroup) {
+      html += `<div class="ac-grp">${esc(it.group)}</div>`;
+      lastGroup = it.group;
+    }
+    const ico = acIcon(it.type, it.fieldDef);
+    const icoCls = acIconClass(it.type, it.fieldDef);
+    html += `<div class="ac-item${i===acSel?' sel':''}" data-idx="${i}" onmousedown="acPick(${i})">
+      <div class="ac-ico ${icoCls}">${esc(ico)}</div>
+      <div class="ac-body">
+        <div class="ac-name">${esc(it.display)}</div>
+        ${it.desc ? `<div class="ac-desc">${esc(it.desc)}</div>` : ''}
+      </div>
+      ${it.hint ? `<span class="ac-hint">${esc(it.hint)}</span>` : ''}
+    </div>`;
+  });
+
+  drop.innerHTML = html;
   drop.classList.add('open');
+
+  // Scroll selected item into view
+  const selEl = drop.querySelector('.ac-item.sel');
+  if (selEl) selEl.scrollIntoView({block:'nearest'});
 }
 
 function acUpdate() {
@@ -1281,20 +1294,17 @@ function acPick(idx) {
   const cursor = inp.selectionStart;
   const before = raw.slice(0, cursor);
 
-  // Find the token to replace
   let replaceStart = cursor;
   const insert = item.insert;
 
   if (item.type === 'op' && !before.includes('(')) {
-    // Replace the partial operator text
     replaceStart = 0;
   } else if (item.type === 'val') {
-    // Replace from after the operator/quote
     const eqMatch = before.match(/(.*[=!><]+\s*"?)([^"]*)$/);
     if (eqMatch) replaceStart = eqMatch.index + eqMatch[1].length;
-  } else if (item.type === 'col') {
-    // Replace the partial field/table name
-    const wordMatch = before.match(/(.*[(\s,.])(\w*)$/);
+  } else {
+    // col, entity, table, fw — replace partial word token
+    const wordMatch = before.match(/(.*[(\s,.])(\S*)$/);
     if (wordMatch) replaceStart = wordMatch.index + wordMatch[1].length;
     else {
       const wordMatch2 = before.match(/^(\w+\()(.*)$/);
@@ -1303,8 +1313,7 @@ function acPick(idx) {
   }
 
   const after = raw.slice(cursor);
-  const newVal = raw.slice(0, replaceStart) + insert + after;
-  inp.value = newVal;
+  inp.value = raw.slice(0, replaceStart) + insert + after;
   const newCursor = replaceStart + insert.length;
   inp.setSelectionRange(newCursor, newCursor);
   inp.focus();
@@ -1313,20 +1322,15 @@ function acPick(idx) {
 
 function acKey(e) {
   const drop = document.getElementById('acDrop');
-  if (drop.classList.contains('open') && acItems.length) {
+  const isOpen = drop.classList.contains('open') && acItems.length;
+  if (isOpen) {
     if (e.key === 'ArrowDown') { e.preventDefault(); acSel = (acSel + 1) % acItems.length; acRender(acItems); return; }
     if (e.key === 'ArrowUp') { e.preventDefault(); acSel = (acSel - 1 + acItems.length) % acItems.length; acRender(acItems); return; }
-    if (e.key === 'Tab' || (e.key === 'Enter' && acItems.length > 0)) {
-      // Tab always picks; Enter picks only if dropdown is open and not the same as just running the command
-      if (e.key === 'Tab' || acItems.length > 0) {
-        e.preventDefault();
-        acPick(acSel);
-        return;
-      }
-    }
+    if (e.key === 'Tab') { e.preventDefault(); acPick(acSel); return; }
+    if (e.key === 'Enter') { e.preventDefault(); acPick(acSel); return; }
     if (e.key === 'Escape') { e.preventDefault(); acClose(); return; }
   }
-  if (e.key === 'Enter' && !drop.classList.contains('open')) { execCmd(); }
+  if (e.key === 'Enter' && !isOpen) { execCmd(); }
 }
 
 render();
