@@ -78,12 +78,31 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .sum-row td{background:#fafaf8;font-size:11px;color:var(--txm);border-top:2px solid var(--bd);font-style:italic}
 .select-cb{width:14px;height:14px;cursor:pointer}
 
-.cmd-bar{padding:8px 20px;border-top:1px solid var(--bd);background:#fff;flex-shrink:0;display:flex;gap:6px;align-items:center}
+.cmd-bar{padding:8px 20px;border-top:1px solid var(--bd);background:#fff;flex-shrink:0;display:flex;gap:6px;align-items:center;position:relative}
 .cmd-in{flex:1;font-family:'SF Mono',Consolas,monospace;font-size:12px;padding:6px 10px;border:1px solid var(--bd);border-radius:var(--r);outline:none;background:#fafaf8}
 .cmd-in:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 2px var(--acl)}.cmd-in::placeholder{color:var(--txf)}
 .cmd-result{padding:6px 20px;border-top:1px solid var(--bdl);background:#f0faf4;font-size:12px;color:var(--accent);flex-shrink:0;display:flex;align-items:center;gap:8px}
 .cmd-error{background:var(--dbg);color:var(--danger)}
 .cmd-hint{font-size:10px;color:var(--txf);flex-shrink:0}
+
+.ac-drop{position:absolute;bottom:calc(100% + 4px);left:20px;right:80px;background:#fff;border:1px solid #e0ddd8;border-radius:8px;box-shadow:0 -2px 8px rgba(0,0,0,.06),0 -8px 24px rgba(0,0,0,.08);max-height:320px;overflow-y:auto;z-index:50;display:none;padding:6px 0}
+.ac-drop.open{display:block;animation:acIn .12s ease-out}
+@keyframes acIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.ac-drop::-webkit-scrollbar{width:5px}.ac-drop::-webkit-scrollbar-thumb{background:#d4d1ca;border-radius:4px}.ac-drop::-webkit-scrollbar-thumb:hover{background:#b0a89e}
+.ac-grp{font-size:10px;font-weight:600;color:#9ca3af;padding:10px 14px 4px;text-transform:uppercase;letter-spacing:.06em}
+.ac-grp:not(:first-child){border-top:1px solid #f0ede8;margin-top:4px;padding-top:10px}
+.ac-item{padding:7px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-radius:6px;margin:1px 6px;transition:background .06s}
+.ac-item:hover,.ac-item.sel{background:#f3f4f6}
+.ac-item.sel{background:#eff6ff}
+.ac-ico{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:700;font-family:'SF Mono',Consolas,monospace}
+.ac-ico-op{background:#eef2ff;color:#6366f1}.ac-ico-text{background:#f0fdf4;color:#22c55e}.ac-ico-select{background:#fefce8;color:#ca8a04}
+.ac-ico-derived{background:var(--mbg);color:var(--meant)}.ac-ico-val{background:#f0fdf4;color:#15803d}.ac-ico-entity{background:#fdf2f8;color:#db2777}
+.ac-ico-table{background:#f0f9ff;color:#0284c7}.ac-ico-fw{background:var(--rbg);color:var(--rec)}
+.ac-body{flex:1;min-width:0}
+.ac-name{font-size:13px;font-weight:500;color:#1f2937;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-desc{font-size:11px;color:#9ca3af;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ac-hint{font-family:'SF Mono',Consolas,monospace;font-size:10px;color:#c4b5a4;flex-shrink:0;white-space:nowrap}
+.ac-empty{padding:16px 14px;text-align:center;font-size:12px;color:#9ca3af;font-style:italic}
 
 .ctx{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:260px;max-width:480px;padding:4px 0;font-size:12px;max-height:80vh;overflow-y:auto}
 .ctx-label{font-size:10px;color:var(--txf);padding:4px 14px 2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
@@ -248,8 +267,9 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
   <div id="cmdRes" style="display:none"></div>
   <div class="cmd-bar" id="cmdBar">
     <span class="cmd-hint">EO ▸</span>
-    <input class="cmd-in" id="cmdIn" placeholder='SEG(records, housing="Sleeping in vehicle") · SYN(records, income) · INS(table:referrals)' onkeydown="if(event.key==='Enter')execCmd()">
+    <input class="cmd-in" id="cmdIn" placeholder='Type an operator or press Tab for suggestions…' onkeydown="acKey(event)" oninput="acUpdate()" onfocus="acUpdate()" onblur="setTimeout(acClose,150)">
     <button class="b b-sm b-primary" onclick="execCmd()">Run</button>
+    <div class="ac-drop" id="acDrop"></div>
   </div>
 </div>
 <div id="modalRoot"></div>
@@ -1328,6 +1348,265 @@ window.closeModal=()=>{document.getElementById('modalRoot').innerHTML='';};
 
 function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtDate(ts){const d=new Date(ts);return isNaN(d)?String(ts):d.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit'});}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// EOQL AUTOCOMPLETE
+// ═════════════════════════════════════════════════════════════════════════════
+const acOps = [
+  {key:'SEG', label:'Segment', desc:'Filter records by field conditions', hint:'SEG(records, field="value")'},
+  {key:'SYN', label:'Synthesize', desc:'Aggregate a numeric field across records', hint:'SYN(records, field)'},
+  {key:'INS', label:'Insert', desc:'Create a new entity or table', hint:'INS(@uid) or INS(table:name)'},
+  {key:'SIG', label:'Signal', desc:'Set a field value on an entity', hint:'SIG(@uid.field, "value")'},
+  {key:'ALT', label:'Alternate', desc:'Change an existing observation', hint:'ALT(@uid.field, "new")'},
+  {key:'NUL', label:'Null', desc:'Clear a field or remove an entity', hint:'NUL(@uid.field)'},
+  {key:'SUP', label:'Supersede', desc:'Hold a conflicting claim on a field', hint:'SUP(@uid.field, "value")'},
+  {key:'CON', label:'Connect', desc:'Link two entities together', hint:'CON(@uid1, @uid2)'},
+  {key:'REC', label:'Recalculate', desc:'Change the active framework mapping', hint:'REC(housing)'},
+];
+
+let acSel = 0;
+let acItems = [];
+
+// Icon characters for each suggestion type
+function acIcon(type, fieldDef) {
+  if (type === 'op') return 'fn';
+  if (type === 'val') return '=';
+  if (type === 'entity') return '@';
+  if (type === 'table') return '⊞';
+  if (type === 'fw') return '↬';
+  if (!fieldDef) return 'A';
+  if (fieldDef.layer === 'meant') return 'ƒ';
+  if (fieldDef.type === 'select') return '▾';
+  return 'A';
+}
+function acIconClass(type, fieldDef) {
+  if (type === 'op') return 'ac-ico-op';
+  if (type === 'val') return 'ac-ico-val';
+  if (type === 'entity') return 'ac-ico-entity';
+  if (type === 'table') return 'ac-ico-table';
+  if (type === 'fw') return 'ac-ico-fw';
+  if (!fieldDef) return 'ac-ico-text';
+  if (fieldDef.layer === 'meant') return 'ac-ico-derived';
+  if (fieldDef.type === 'select') return 'ac-ico-select';
+  return 'ac-ico-text';
+}
+
+// Build a suggestion item
+function acItem(type, insert, display, desc, hint, fieldDef, group) {
+  return {type, insert, display, desc: desc||'', hint: hint||'', fieldDef: fieldDef||null, group: group||''};
+}
+
+// Determine what to suggest based on cursor context
+function acSuggest(raw, cursor) {
+  if (!raw || cursor === 0) return acOps.map(o => acItem('op', o.key+'(', o.key, o.desc, o.hint, null, 'Operators'));
+
+  const before = raw.slice(0, cursor);
+
+  // Typing an operator name (no open paren yet)
+  const opMatch = before.match(/^(\w*)$/i);
+  if (opMatch) {
+    const q = opMatch[1].toUpperCase();
+    return acOps.filter(o => o.key.startsWith(q) || (q.length > 0 && o.key.includes(q)))
+      .map(o => acItem('op', o.key+'(', o.key, o.desc, o.hint, null, 'Operators'));
+  }
+
+  // Inside an operator's parentheses
+  const opCtx = before.match(/^(\w+)\((.*)$/is);
+  if (!opCtx) return [];
+  const op = opCtx[1].toUpperCase();
+  const inner = opCtx[2];
+  const uids = Object.keys(liveData);
+
+  // Helper: build field suggestions
+  function fieldItems(q, subset, group) {
+    return (subset || fields).filter(f => f.key.includes(q) || f.label.toLowerCase().includes(q))
+      .map(f => acItem('col', f.key, f.label, f.key, f.type === 'select' ? f.opts?.length+' options' : f.type, f, group || (f.layer === 'meant' ? 'Derived fields' : 'Fields')));
+  }
+
+  // Helper: build value suggestions for a field
+  function valItems(fKey, partial, hasQuote, group) {
+    const f = fields.find(x => x.key === fKey) || fields.find(x => x.label.toLowerCase().replace(/\s+/g,'_') === fKey);
+    if (!f) return [];
+    let vals = f.opts ? f.opts : [...new Set(Object.values(liveData).map(d => d[f.key]).filter(Boolean).map(String))];
+    if (partial) vals = vals.filter(v => v.toLowerCase().includes(partial.toLowerCase()));
+    return vals.map(v => acItem('val', hasQuote ? v+'"' : '"'+v+'"', v, f.label, '', f, group || 'Values'));
+  }
+
+  // Helper: build entity suggestions
+  function entityItems(q, suffix, group) {
+    return uids.filter(u => u.toLowerCase().includes(q.toLowerCase()))
+      .map(u => acItem('entity', u+suffix, liveData[u]?.name || u, u, '', null, group || 'Records'));
+  }
+
+  // --- SEG ---
+  if (op === 'SEG') {
+    const afterComma = inner.match(/^[^,]*,\s*(.*)$/);
+    if (afterComma) {
+      const fp = afterComma[1];
+      const valMatch = fp.match(/^(\w+)\s*[=!><]+\s*"?([^"]*)$/);
+      if (valMatch) {
+        const hasQuote = !!fp.match(/[=!><]+\s*"[^"]*$/);
+        return valItems(valMatch[1], valMatch[2], hasQuote);
+      }
+      const fieldP = fp.match(/^(\w*)$/);
+      if (fieldP) return fieldItems(fieldP[1].toLowerCase(), fields.filter(f => f.layer === 'given'), 'Filter by field');
+      return [];
+    }
+    const tblQ = inner.toLowerCase();
+    const tables = [{k:'records',l:'Main entity table'},...Object.keys(customTables).map(k=>({k,l:'Custom table'}))];
+    return tables.filter(t => t.k.includes(tblQ))
+      .map(t => acItem('table', t.k+', ', t.k, t.l, '', null, 'Tables'));
+  }
+
+  // --- SYN ---
+  if (op === 'SYN') {
+    const afterComma = inner.match(/^[^,]*,\s*(\w*)$/);
+    if (afterComma) return fieldItems(afterComma[1].toLowerCase(), fields.filter(f => f.layer === 'given' && f.type === 'text'), 'Numeric fields');
+    const q = inner.toLowerCase();
+    const opts = [
+      acItem('table', 'records, ', 'records', 'Main entity table', '', null, 'Source'),
+      acItem('op', 'SEG( ', 'SEG(…)', 'Nested filter first', '', null, 'Source'),
+    ];
+    return opts.filter(o => o.display.toLowerCase().includes(q));
+  }
+
+  // --- REC ---
+  if (op === 'REC') {
+    const q = inner.toLowerCase();
+    return Object.entries(frameworks)
+      .filter(([k,fw]) => k.includes(q) || fw.name.toLowerCase().includes(q))
+      .map(([k,fw]) => acItem('fw', k+')', k, fw.name, fw.version, null, 'Frameworks'));
+  }
+
+  // --- INS ---
+  if (op === 'INS') {
+    const q = inner.toLowerCase();
+    return [
+      acItem('table', 'table:', 'table:name', 'Create a new custom table', '', null, 'Insert'),
+      acItem('entity', '@', '@uid', 'Create a new entity record', '', null, 'Insert'),
+    ].filter(o => o.insert.toLowerCase().includes(q) || q.length === 0);
+  }
+
+  // --- SIG / ALT / NUL / SUP ---
+  if (['SIG','ALT','NUL','SUP'].includes(op)) {
+    const dotMatch = inner.match(/^(@\w+)\.(\w*)$/);
+    if (dotMatch) {
+      const q = dotMatch[2].toLowerCase();
+      const subset = (op === 'SUP') ? fields.filter(f => f.layer === 'given') : fields;
+      return fieldItems(q, subset, 'Fields on ' + dotMatch[1]);
+    }
+    const valMatch = inner.match(/^(@\w+)\.(\w+)\s*,\s*"?([^"]*)$/);
+    if (valMatch) {
+      const hasQuote = !!inner.match(/,\s*"[^"]*$/);
+      return valItems(valMatch[2], valMatch[3], hasQuote);
+    }
+    const atMatch = inner.match(/^(@?\w*)$/);
+    if (atMatch) return entityItems(atMatch[1], '.', 'Records');
+  }
+
+  // --- CON ---
+  if (op === 'CON') {
+    const afterComma = inner.match(/^[^,]*,\s*(@?\w*)$/);
+    if (afterComma) return entityItems(afterComma[1], '', 'Link to');
+    const q = inner;
+    return entityItems(q, ', ', 'Records');
+  }
+
+  return [];
+}
+
+function acRender(items) {
+  const drop = document.getElementById('acDrop');
+  if (!items.length) { drop.classList.remove('open'); acItems = []; return; }
+  acItems = items;
+  if (acSel >= items.length) acSel = 0;
+
+  // Group items
+  let html = '';
+  let lastGroup = '';
+  items.forEach((it, i) => {
+    if (it.group && it.group !== lastGroup) {
+      html += `<div class="ac-grp">${esc(it.group)}</div>`;
+      lastGroup = it.group;
+    }
+    const ico = acIcon(it.type, it.fieldDef);
+    const icoCls = acIconClass(it.type, it.fieldDef);
+    html += `<div class="ac-item${i===acSel?' sel':''}" data-idx="${i}" onmousedown="acPick(${i})">
+      <div class="ac-ico ${icoCls}">${esc(ico)}</div>
+      <div class="ac-body">
+        <div class="ac-name">${esc(it.display)}</div>
+        ${it.desc ? `<div class="ac-desc">${esc(it.desc)}</div>` : ''}
+      </div>
+      ${it.hint ? `<span class="ac-hint">${esc(it.hint)}</span>` : ''}
+    </div>`;
+  });
+
+  drop.innerHTML = html;
+  drop.classList.add('open');
+
+  // Scroll selected item into view
+  const selEl = drop.querySelector('.ac-item.sel');
+  if (selEl) selEl.scrollIntoView({block:'nearest'});
+}
+
+function acUpdate() {
+  const inp = document.getElementById('cmdIn');
+  const items = acSuggest(inp.value, inp.selectionStart);
+  acSel = 0;
+  acRender(items);
+}
+
+function acClose() {
+  document.getElementById('acDrop').classList.remove('open');
+  acItems = [];
+}
+
+function acPick(idx) {
+  const item = acItems[idx];
+  if (!item) return;
+  const inp = document.getElementById('cmdIn');
+  const raw = inp.value;
+  const cursor = inp.selectionStart;
+  const before = raw.slice(0, cursor);
+
+  let replaceStart = cursor;
+  const insert = item.insert;
+
+  if (item.type === 'op' && !before.includes('(')) {
+    replaceStart = 0;
+  } else if (item.type === 'val') {
+    const eqMatch = before.match(/(.*[=!><]+\s*"?)([^"]*)$/);
+    if (eqMatch) replaceStart = eqMatch.index + eqMatch[1].length;
+  } else {
+    // col, entity, table, fw — replace partial word token
+    const wordMatch = before.match(/(.*[(\s,.])(\S*)$/);
+    if (wordMatch) replaceStart = wordMatch.index + wordMatch[1].length;
+    else {
+      const wordMatch2 = before.match(/^(\w+\()(.*)$/);
+      if (wordMatch2) replaceStart = wordMatch2[1].length;
+    }
+  }
+
+  const after = raw.slice(cursor);
+  inp.value = raw.slice(0, replaceStart) + insert + after;
+  const newCursor = replaceStart + insert.length;
+  inp.setSelectionRange(newCursor, newCursor);
+  inp.focus();
+  acUpdate();
+}
+
+function acKey(e) {
+  const drop = document.getElementById('acDrop');
+  const isOpen = drop.classList.contains('open') && acItems.length;
+  if (isOpen) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); acSel = (acSel + 1) % acItems.length; acRender(acItems); return; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); acSel = (acSel - 1 + acItems.length) % acItems.length; acRender(acItems); return; }
+    if (e.key === 'Tab') { e.preventDefault(); acPick(acSel); return; }
+    if (e.key === 'Enter') { e.preventDefault(); acPick(acSel); return; }
+    if (e.key === 'Escape') { e.preventDefault(); acClose(); return; }
+  }
+  if (e.key === 'Enter' && !isOpen) { execCmd(); }
+}
 
 render();
 </script>
