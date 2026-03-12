@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Khora — EO Event Stream</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
 :root{--bg:#f9f9f7;--card:#fff;--bd:#d4d1ca;--bdl:#e8e5df;--tx:#1a1a1a;--tx2:#555;--txm:#888;--txf:#b0a89e;
 --accent:#1a6b4a;--acl:#e8f5ee;--warn:#b44d12;--wbg:#fef7ed;--wbd:#f5deb8;
@@ -92,17 +93,59 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .ctx-item{padding:6px 14px;cursor:pointer;color:var(--tx2)}.ctx-item:hover{background:var(--bg);color:var(--tx)}
 
 /* PROFILE */
-.pw{flex:1;overflow-y:auto;padding:20px;display:none}.pw.on{display:block}
+.pw{flex:1;overflow-y:auto;padding:0;display:none}.pw.on{display:block}
 .pw::-webkit-scrollbar{width:4px}.pw::-webkit-scrollbar-thumb{background:var(--bdl);border-radius:2px}
-.pn{font-size:20px;font-weight:700;margin-bottom:1px}.pm{font-size:12px;color:var(--txm);margin-bottom:16px}
-.pm code{font-family:'SF Mono',Consolas,monospace;font-size:10px;background:#f0ede8;padding:1px 5px;border-radius:3px}
-.attn{padding:8px 12px;border:1px solid var(--dbd);background:var(--dbg);border-radius:var(--r);margin-bottom:14px;font-size:12px;color:#7f1d1d}.attn b{color:var(--danger)}
-.sh{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin:18px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--bdl)}
+.pw-inner{max-width:820px;margin:0 auto;padding:0 24px 40px}
 
-.fb{border:1px solid var(--bdl);border-radius:var(--r);margin-bottom:6px;background:#fff;overflow:hidden}
+/* Profile header */
+.p-header{padding:24px 24px 20px;border-bottom:1px solid var(--bdl);background:#fff;margin-bottom:0}
+.p-header-inner{max-width:820px;margin:0 auto;display:flex;align-items:flex-start;gap:16px}
+.p-avatar{width:52px;height:52px;border-radius:50%;background:#c8d4e0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#4a5568;flex-shrink:0;letter-spacing:.5px}
+.p-identity{flex:1;min-width:0}
+.p-name{font-size:22px;font-weight:700;line-height:1.2;margin-bottom:2px}
+.p-uid{font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--txm);margin-bottom:8px}
+.p-pills{display:flex;gap:6px;flex-wrap:wrap}
+.p-pill{font-size:10px;font-weight:600;padding:2px 10px;border-radius:12px;white-space:nowrap}
+.p-pill-active{background:#e8f5ee;color:#15613e;border:1px solid #b7e4c7}
+.p-pill-housing{background:var(--mbg);color:var(--meant);border:1px solid var(--mbd)}
+.p-pill-warn{background:var(--wbg);color:var(--warn);border:1px solid var(--wbd)}
+.p-actions{display:flex;gap:6px;flex-shrink:0;align-items:flex-start;margin-top:4px}
+.p-action-btn{font-family:inherit;font-size:11px;padding:5px 14px;border:1px solid var(--bd);background:#fff;color:var(--tx2);cursor:pointer;border-radius:var(--r);transition:all .12s;display:flex;align-items:center;gap:5px}
+.p-action-btn:hover{background:var(--bg);color:var(--tx)}
+
+/* Attention banner */
+.attn{padding:10px 14px;border:1px solid var(--dbd);background:var(--dbg);border-radius:var(--r);margin:16px 0 0;font-size:12px;color:#7f1d1d;display:flex;align-items:center;gap:8px}
+.attn b{color:var(--danger)}
+.attn-icon{font-size:16px;flex-shrink:0}
+
+/* Summary cards */
+.p-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0 0}
+.p-card{border:1px solid var(--bdl);border-radius:var(--r);padding:12px 14px;background:#fff}
+.p-card.contested{border-color:var(--dbd);background:linear-gradient(to bottom,var(--dbg),#fff 40%)}
+.p-card-label{font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.p-card-value{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:2px}
+.p-card-meta{font-size:10px;color:var(--txf)}
+.p-card-flag{font-size:9px;font-weight:600;color:var(--danger);margin-top:2px}
+
+/* Section headers */
+.sh{font-size:11px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin:24px 0 10px;padding-bottom:4px;border-bottom:1px solid var(--bdl)}
+
+/* Contact card */
+.p-contact{border:1px solid var(--bdl);border-radius:var(--r);background:#fff;overflow:hidden;margin-top:8px}
+.p-contact-row{display:flex;align-items:center;padding:10px 14px;gap:12px;border-bottom:1px solid #f5f3ef}
+.p-contact-row:last-child{border-bottom:none}
+.p-contact-icon{width:32px;height:32px;border-radius:50%;background:#f0ede8;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;color:var(--tx2)}
+.p-contact-info{flex:1;min-width:0}
+.p-contact-name{font-size:13px;font-weight:600}
+.p-contact-detail{font-size:11px;color:var(--txm)}
+.p-contact-action{font-size:12px;color:var(--accent);font-weight:500;flex-shrink:0;text-decoration:none}
+.p-contact-action:hover{text-decoration:underline}
+
+/* Field boxes */
+.fb{border:1px solid var(--bdl);border-radius:var(--r);margin-bottom:8px;background:#fff;overflow:hidden}
 .fb.contested{border-color:var(--dbd)}
-.fb-head{padding:6px 10px;background:#fafaf8;border-bottom:1px solid var(--bdl);font-size:11px;font-weight:600;color:var(--tx2)}
-.fb-row{display:flex;align-items:center;padding:5px 10px;min-height:32px;gap:8px;border-bottom:1px solid #f5f3ef}
+.fb-head{padding:8px 12px;background:#fafaf8;border-bottom:1px solid var(--bdl);font-size:11px;font-weight:600;color:var(--tx2);display:flex;align-items:center;justify-content:space-between}
+.fb-row{display:flex;align-items:center;padding:6px 12px;min-height:36px;gap:8px;border-bottom:1px solid #f5f3ef}
 .fb-row:last-child{border-bottom:none}
 .fb-tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:2px;flex-shrink:0;width:44px;text-align:center;text-transform:uppercase;letter-spacing:.03em}
 .fb-tag-g{background:#f5f3ef;color:#78716c;border:1px solid #e0ddd6}
@@ -112,13 +155,28 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .fb-fw{font-size:10px;color:var(--meant);font-style:italic}
 .fb-acts{display:none;gap:3px;margin-left:auto}.fb-row:hover .fb-acts{display:flex}
 .ine{padding:3px 6px;border:1.5px solid var(--accent);font-family:inherit;font-size:13px;border-radius:3px;outline:none;max-width:220px;width:100%}.ine:focus{box-shadow:0 0 0 2px var(--acl)}
-.sup-blk{padding:6px 10px;background:var(--dbg);border-bottom:1px solid var(--dbd)}
-.sup-t{font-size:10px;font-weight:600;color:var(--danger);margin-bottom:3px}
-.sup-opt{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px}.sup-src{font-size:9px;color:var(--txm)}
-.ht{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 10px}.ht:hover{text-decoration:underline}
-.cc{padding:4px 10px 8px;background:#fafaf8;font-size:10px;color:var(--txm)}
+.sup-blk{padding:8px 12px;background:var(--dbg);border-bottom:1px solid var(--dbd)}
+.sup-t{font-size:10px;font-weight:600;color:var(--danger);margin-bottom:4px}
+.sup-opt{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px}.sup-src{font-size:9px;color:var(--txm)}
+.ht{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 12px}.ht:hover{text-decoration:underline}
+.cc{padding:4px 12px 8px;background:#fafaf8;font-size:10px;color:var(--txm)}
 .cl-row{padding:2px 0;display:flex;gap:6px;align-items:baseline}
 .cl-op{font-family:'SF Mono',Consolas,monospace;font-size:9px;font-weight:700}.cl-old{text-decoration:line-through;color:var(--txf)}
+
+/* Event log slide-out panel for profile view */
+.p-log-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:90;display:none}
+.p-log-overlay.open{display:block}
+.p-log-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:#fff;border-left:1px solid var(--bd);box-shadow:-4px 0 24px rgba(0,0,0,.08);z-index:91;transition:right .25s ease;display:flex;flex-direction:column}
+.p-log-panel.open{right:0}
+.p-log-head{padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.p-log-title{font-size:14px;font-weight:700}
+.p-log-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--txm);padding:2px 6px;border-radius:3px}
+.p-log-close:hover{background:var(--bg);color:var(--tx)}
+.p-log-body{flex:1;overflow-y:auto;font-family:'SF Mono',Consolas,monospace;font-size:10px}
+.p-log-body .le{padding:3px 14px}
+
+/* Viewing footer */
+.p-footer{text-align:center;padding:20px 0 0;font-size:11px;color:var(--txf)}
 
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;z-index:100}
 .modal{background:#fff;border:1px solid var(--bd);border-radius:8px;padding:22px;width:460px;max-width:90vw;box-shadow:0 8px 30px rgba(0,0,0,.12);max-height:90vh;overflow-y:auto}
@@ -455,7 +513,23 @@ function showToast(ev){
 // ═════════════════════════════════════════════════════════════════════════════
 function showV(v){view=v;document.getElementById('tDB').classList.toggle('on',v==='db');document.getElementById('tPR').classList.toggle('on',v==='profile');
   ['toolbar','dbV','cmdBar'].forEach(id=>document.getElementById(id).style.display=v==='db'?'':'none');
-  document.getElementById('profV').className='pw'+(v==='profile'?' on':'');render();}
+  document.getElementById('profV').className='pw'+(v==='profile'?' on':'');
+  // Hide event log sidebar in profile view, show it in db view
+  document.querySelector('.lp').style.display=v==='profile'?'none':'';
+  render();}
+
+function toggleProfileLog(){
+  const overlay=document.getElementById('pLogOverlay');
+  const panel=document.getElementById('pLogPanel');
+  const isOpen=panel.classList.contains('open');
+  if(isOpen){panel.classList.remove('open');overlay.classList.remove('open');}
+  else{panel.classList.add('open');overlay.classList.add('open');renderProfileLog();}
+}
+function renderProfileLog(){
+  const body=document.getElementById('pLogBody');if(!body||!selectedProfile)return;
+  const relevant=events.filter(e=>e.target===selectedProfile);
+  body.innerHTML=relevant.length?relevant.map(e=>`<div class="le"><span class="le-ts">${fmtDate(e.ts)}</span><span class="le-expr op-${e.op.toLowerCase()}">${eoN(e)}</span></div>`).join(''):'<div style="padding:20px;color:var(--txm);text-align:center;font-family:inherit">No events for this person.</div>';
+}
 
 function render(){
   renderScrubber();renderHorizon();renderRecBan();renderLog();renderDTabs();
@@ -857,19 +931,77 @@ function renderProfile(){
   if(!r){el.innerHTML=`<div style="padding:40px"><button class="b" onclick="showV('db')">← Back</button><p style="margin-top:10px;color:var(--txm)">Doesn't exist at this point.</p></div>`;return;}
   const past=!isNow();const stacks=S.stacks[r.uid]||{};
 
+  // ── Initials ──
+  const nameParts=(r.name||'?').split(',').map(s=>s.trim());
+  const initials=(nameParts.length>=2?(nameParts[0][0]+nameParts[1][0]):(r.name||'?').slice(0,2)).toUpperCase();
+
+  // ── Status pills ──
+  let pills=[];
+  // Enrollment status pill
+  const enrollField=fields.find(f=>f.key==='status');
+  const enrollVal=r.status;
+  if(enrollVal)pills.push(`<span class="p-pill p-pill-active">${esc(enrollVal)}</span>`);
+  // Housing classification pill
+  const hcVal=r.housing_class;
+  if(hcVal)pills.push(`<span class="p-pill p-pill-housing">${esc(hcVal)}</span>`);
+
+  // ── Attention items ──
+  let attnItems=[];
+  if(!past){Object.keys(S.sups).forEach(k=>{if(!k.startsWith(r.uid+'.'))return;const fk=k.split('.')[1];attnItems.push(fields.find(f=>f.key===fk)?.label||fk);});}
   let attn='';
-  if(!past){const items=[];Object.keys(S.sups).forEach(k=>{if(!k.startsWith(r.uid+'.'))return;const fk=k.split('.')[1];items.push(fields.find(f=>f.key===fk)?.label||fk);});
-  if(items.length)attn=`<div class="attn"><b>Needs attention:</b> ${items.join(', ')} — conflicting sources</div>`;}
+  if(attnItems.length)attn=`<div class="attn"><span class="attn-icon">!</span> <b>Needs attention:</b> ${attnItems.join(', ')} — conflicting sources</div>`;
 
+  // ── Summary cards ──
+  const cardFields=[
+    {key:'housing',label:'Housing',fmt:v=>v},
+    {key:'income',label:'Income',fmt:v=>v&&!v.startsWith('$')?'$'+v+'/mo':v?(v.includes('/')?v:v+'/mo'):null},
+    {key:'insurance',label:'Insurance',fmt:v=>v},
+    {key:'enrollment_basis',label:'Enrollment',fmt:v=>{const st=r.status;return st||v;}},
+  ];
+  let cardsH=cardFields.map(cf=>{
+    const val=r[cf.key];const sk=r.uid+'.'+cf.key;const isSup=!!S.sups[sk];
+    const stack=stacks[cf.key]||[];const latest=stack.length?stack[stack.length-1]:null;
+    const displayVal=val?cf.fmt(val):null;
+    const metaStr=latest?fmtDate(latest.ts):'';
+    return `<div class="p-card${isSup?' contested':''}">
+      <div class="p-card-label">${cf.label}</div>
+      <div class="p-card-value">${displayVal?esc(displayVal):'<span style="color:var(--txf);font-style:italic;font-weight:400;font-size:12px">—</span>'}</div>
+      <div class="p-card-meta">${metaStr}</div>
+      ${isSup?'<div class="p-card-flag">Conflicting</div>':''}
+    </div>`;
+  }).join('');
+
+  // ── Connections ──
   const conns=S.conns.filter(c=>c.from===r.uid||c.to===r.uid);
-  let connH='';if(conns.length)connH=`<div class="sh">Connections</div>${conns.map(c=>{const o=c.from===r.uid?c.to:c.from;const oR=S.records.find(x=>x.uid===o);return`<div style="font-size:12px;padding:3px 0">${esc(oR?.name||o)} <span style="color:var(--txm);font-style:italic">${esc(c.note)}</span></div>`;}).join('')}`;
+  let connH='';
+  if(conns.length||r.phone){
+    connH=`<div class="sh">Contact & Connections</div><div class="p-contact">`;
+    if(r.phone){
+      connH+=`<div class="p-contact-row">
+        <div class="p-contact-icon">📞</div>
+        <div class="p-contact-info"><div class="p-contact-name">Phone</div><div class="p-contact-detail">Primary contact</div></div>
+        <span class="p-contact-action">${esc(r.phone)}</span>
+      </div>`;
+    }
+    conns.forEach(c=>{
+      const o=c.from===r.uid?c.to:c.from;
+      const oR=S.records.find(x=>x.uid===o);
+      const oName=oR?.name||o;
+      const oInitials=(oName.split(',').map(s=>s.trim()).length>=2?(oName.split(',')[0][0]+oName.split(',')[1].trim()[0]):oName.slice(0,2)).toUpperCase();
+      connH+=`<div class="p-contact-row" style="cursor:pointer" onclick="selectedProfile='${o}';render()">
+        <div class="p-contact-icon">${oInitials}</div>
+        <div class="p-contact-info"><div class="p-contact-name">${esc(oName)}</div><div class="p-contact-detail">${esc(c.note||'Connection')}</div></div>
+        <span class="p-contact-action">CON</span>
+      </div>`;
+    });
+    connH+=`</div>`;
+  }
 
-  // Group given fields with their derived meant fields
+  // ── Observations (field boxes) ──
   const givenFields=fields.filter(f=>f.layer==='given');
   let fH='';
 
   givenFields.forEach(gf=>{
-    // Find if there's a framework deriving from this given field
     let meantField=null, fwObj=null;
     for(const[fwKey,fw]of Object.entries(S.frameworks)){
       if(fw.givenField===gf.key){meantField=fields.find(f=>f.key===fw.meantField);fwObj=fw;break;}
@@ -895,18 +1027,15 @@ function renderProfile(){
 
     let layers=`<div class="fb-row"><span class="fb-tag fb-tag-g">given</span>${givenH}${meta}${acts}</div>`;
 
-    // SUP
     if(isSup){const s=S.sups[sk];layers+=`<div class="sup-blk"><div class="sup-t">Conflicting sources</div>
       <div class="sup-opt"><div>${esc(s.a.value)} <span class="sup-src">${s.a.agent}</span></div>${!past?`<button class="b b-sm" onclick="pushEv('ALT','${r.uid}','${gf.key}','${esc(s.a.value)}');liveSet('${r.uid}','${gf.key}','${esc(s.a.value)}');scrubPos=events.length;render()">Accept</button>`:''}</div>
       <div class="sup-opt"><div>${esc(s.b.value)} <span class="sup-src">${s.b.agent}</span></div>${!past?`<button class="b b-sm" onclick="pushEv('ALT','${r.uid}','${gf.key}','${esc(s.b.value)}');liveSet('${r.uid}','${gf.key}','${esc(s.b.value)}');scrubPos=events.length;render()">Accept</button>`:''}</div></div>`;}
 
-    // History
     if(prior.length){
       layers+=`<div style="padding-left:54px"><button class="ht" onclick="expFields['${sk}']=!expFields['${sk}'];render()">${exp?'Hide':'Show'} ${prior.length} prior</button></div>`;
       if(exp)layers+=`<div class="cc" style="margin-left:54px">${prior.reverse().map(c=>`<div class="cl-row"><span class="cl-op op-${c.op.toLowerCase()}">${c.op}</span><span class="cl-old">${esc(c.value||'∅')}</span><span>${esc(c.agent)} · ${c.mode} · ${fmtDate(c.ts)}${c.note?' · '+esc(c.note):''}</span></div>`).join('')}</div>`;
     }
 
-    // Meant layer (read-only, derived)
     if(meantField&&fwObj){
       const meantVal=r[meantField.key];
       layers+=`<div class="fb-row" style="background:var(--mbg)"><span class="fb-tag fb-tag-m">meant</span>
@@ -922,9 +1051,40 @@ function renderProfile(){
     ?`<div class="hz-profile-notice">Projected through <b>${esc(perspectiveUser)}</b>. Fields not observed by this user show composite values at reduced opacity.</div>`
     :`<div class="hz-profile-notice">Composite projection — all users' observations.</div>`;
 
-  el.innerHTML=`<div style="margin-bottom:10px"><button class="b" onclick="showV('db')">← Back</button></div>
-    <div class="pn">${esc(r.name||'Unnamed')}</div><div class="pm"><code>${r.uid}</code></div>
-    ${perspNotice}${attn}${connH}<div class="sh">Observations & Classifications</div>${fH}`;
+  // ── Event count for this person ──
+  const evtCount=events.filter(e=>e.target===r.uid).length;
+
+  // ── Assemble ──
+  el.innerHTML=`
+    <div class="p-header">
+      <div class="p-header-inner">
+        <div class="p-avatar">${initials}</div>
+        <div class="p-identity">
+          <div class="p-name">${esc(r.name||'Unnamed')}</div>
+          <div class="p-uid">${r.uid}</div>
+          <div class="p-pills">${pills.join('')}</div>
+        </div>
+        <div class="p-actions">
+          <button class="p-action-btn" onclick="toggleProfileLog()">Event log</button>
+          <button class="p-action-btn" onclick="showV('db')">← Database</button>
+          ${!past?`<button class="p-action-btn" onclick="editCell={uid:'${r.uid}',field:'name'};render();setTimeout(()=>{const i=document.getElementById('pEI');if(i){i.focus();i.select();}},30)">Edit</button>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="pw-inner">
+      ${perspNotice}
+      ${attn}
+      <div class="p-cards">${cardsH}</div>
+      ${connH}
+      <div class="sh">Observations & History</div>
+      ${fH}
+      <div class="p-footer">Viewing as of ${past?fmtDate(events[scrubPos-1]?.ts):'today'} · ${evtCount} events total</div>
+    </div>
+    <div class="p-log-overlay" id="pLogOverlay" onclick="toggleProfileLog()"></div>
+    <div class="p-log-panel" id="pLogPanel">
+      <div class="p-log-head"><span class="p-log-title">Event Log — ${esc(r.name||r.uid)}</span><button class="p-log-close" onclick="toggleProfileLog()">×</button></div>
+      <div class="p-log-body" id="pLogBody"></div>
+    </div>`;
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -946,7 +1106,7 @@ window.doMS=()=>{const r=document.getElementById('modalRoot');const v={};r._fs.f
 window.closeModal=()=>{document.getElementById('modalRoot').innerHTML='';};
 
 function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmtDate(ts){const d=new Date(ts);return isNaN(d)?String(ts):d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function fmtDate(ts){const d=new Date(ts);return isNaN(d)?String(ts):d.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit'});}
 
 render();
 </script>
