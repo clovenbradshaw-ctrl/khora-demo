@@ -768,7 +768,7 @@ window.commitDefEdit=(fk,newDef)=>{
   if(newDef===f.def||!newDef)return;
   const oldDef=f.def;
   f.def=newDef;
-  pushEv('ALT',null,fk,newDef,{oldValue:oldDef,note:`Definition changed: "${oldDef}" → "${newDef}"`,meta:{defEdit:true}});
+  pushEv('ALT',null,fk,newDef,{oldValue:oldDef,note:`Definition changed: "${oldDef}" → "${newDef}"`});
   scrubPos=events.length;
   closeCtx();render();
 };
@@ -802,7 +802,7 @@ window.showCtx=(e,fk)=>{
       <div class="ctx-section">Conflict Resolution</div>
       <div class="ctx-policy">
         <label>When values conflict:</label>
-        <select onchange="fieldPolicies['${fk}']=this.value;pushEv('ALT',null,'${fk}',this.value,{note:'Conflict policy: '+this.value,meta:{policyEdit:true,oldPolicy:'${cur}'}});scrubPos=events.length;">
+        <select onchange="fieldPolicies['${fk}']=this.value;pushEv('ALT',null,'${fk}',this.value,{oldValue:'${cur}',note:'Conflict policy: '+this.value});scrubPos=events.length;">
           <option value="hold"${cur==='hold'?' selected':''}>Hold for review</option>
           <option value="newest"${cur==='newest'?' selected':''}>Accept newest</option>
           <option value="oldest"${cur==='oldest'?' selected':''}>Keep oldest</option>
@@ -917,19 +917,24 @@ window.submitCellAlt=(uid,fk)=>{
 
 // Resolve a conflict by accepting one of the competing values
 window.resolveConflict=(uid,fk,acceptedValue,rejectedValue,sourceAgent)=>{
-  const f=fields.find(x=>x.key===fk);
+  const old=liveData[uid]?.[fk];
+  // SIG: user signals their selection from the competing values
+  const sigEv=pushEv('SIG',uid,fk,acceptedValue,{
+    note:`Selected "${acceptedValue}" (${sourceAgent||'prior'}) over "${rejectedValue}"`
+  });
+  // ALT: the selection triggers the value change, dissolving the SUP
   pushEv('ALT',uid,fk,acceptedValue,{
-    oldValue:liveData[uid]?.[fk],
-    note:`Conflict resolved: accepted "${acceptedValue}" (${sourceAgent||'prior'}), rejected "${rejectedValue}"`,
-    meta:{conflictResolution:true,rejected:rejectedValue}
+    oldValue:old,
+    parentId:sigEv.id,
+    note:`Conflict resolved: ${old} → ${acceptedValue}`
   });
   liveSet(uid,fk,acceptedValue);
   // Auto-derive meant fields
   for(const[fwKey,fw]of Object.entries(frameworks)){
     if(fw.givenField===fk){
-      const om=fw.mapping[liveData[uid]?.[fk]]||null;
+      const om=fw.mapping[old]||null;
       const nm=fw.mapping[acceptedValue]||null;
-      if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred',note:`Derived after conflict resolution`});
+      if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred',parentId:sigEv.id});
     }
   }
   scrubPos=events.length;closeCtx();render();
