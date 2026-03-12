@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Khora — EO Event Stream</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
 :root{--bg:#f9f9f7;--card:#fff;--bd:#d4d1ca;--bdl:#e8e5df;--tx:#1a1a1a;--tx2:#555;--txm:#888;--txf:#b0a89e;
 --accent:#1a6b4a;--acl:#e8f5ee;--warn:#b44d12;--wbg:#fef7ed;--wbd:#f5deb8;
@@ -214,6 +215,17 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .mfoot{display:flex;gap:6px;margin-top:16px;justify-content:flex-end}
 .map-row{display:flex;gap:6px;align-items:center;font-size:12px;padding:3px 0}.map-row span{color:var(--txm);min-width:160px;font-size:11px}
 .map-row select{width:auto;flex:1}
+.horizon-bar{padding:5px 20px;border-bottom:1px solid var(--bdl);display:flex;align-items:center;gap:14px;background:#fafaf8;flex-shrink:0;font-size:10px;color:var(--txm)}
+.hz-label{font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txf);font-size:9px}
+.hz-param{display:inline-flex;align-items:center;gap:4px}
+.hz-val{font-weight:600;color:var(--tx2)}
+.hz-dim{color:var(--txf);font-style:italic}
+.hz-select{font-family:inherit;font-size:10px;padding:1px 4px;border:1px solid var(--bdl);border-radius:3px;background:#fff;color:var(--tx2);cursor:pointer}
+.c-prov{font-size:8px;color:var(--txf);display:block;line-height:1;margin-top:2px;font-style:italic}
+.c-other-perspective{opacity:0.45}
+.hz-profile-notice{padding:6px 10px;background:#fafaf8;border:1px solid var(--bdl);border-radius:var(--r);font-size:10px;color:var(--txm);margin-bottom:12px;font-style:italic}
+.hz-profile-notice b{color:var(--tx);font-style:normal}
+.dtab-origin{font-size:8px;color:var(--txf);margin-left:4px;font-style:italic}
 </style>
 </head>
 <body>
@@ -228,6 +240,7 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
   <div class="nav"><div class="nav-title">Khora</div><div class="tabs"><button class="tab on" id="tDB" onclick="showV('db')">Database</button><button class="tab" id="tPR" onclick="showV('profile')">Profile</button></div></div>
   <div id="recBan"></div>
   <div class="scrubber" id="scrub"></div>
+  <div class="horizon-bar" id="horizonBar"></div>
   <div id="toolbar" class="db-toolbar"></div>
   <div id="dtabs" class="dtabs" style="display:none"></div>
   <div class="tw" id="dbV"></div>
@@ -323,7 +336,7 @@ function pushEv(op,target,field,value,x={}) {
   evtN++;
   const ev = {id:evtN, ts:x.ts||new Date().toISOString(), op, target:target||null, field:field||null,
     value:value!==undefined?value:null, oldValue:x.oldValue??null,
-    agent:x.agent||'Marta Torres', mode:x.mode||'declared', note:x.note||null,
+    agent:x.agent||'Lorem', mode:x.mode||'declared', note:x.note||null,
     meta:x.meta||null, parentId:x.parentId||null, table:x.table||'records'};
   events.push(ev);
   if (!x.ts && !x.silent) showToast(ev);
@@ -407,7 +420,7 @@ function seed() {
   liveSet('@001a','housing','Sleeping in vehicle');
   p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:'System',mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
 
-  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Marta Torres',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
+  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Lorem',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
   liveSet('@001a','housing','Couch-surfing, no lease');
   p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:'System',mode:'inferred',oldValue:'Literally homeless'});
 
@@ -474,13 +487,30 @@ function replayTo(idx) {
 // ═════════════════════════════════════════════════════════════════════════════
 // STATE
 // ═════════════════════════════════════════════════════════════════════════════
-let view='db', scrubPos=events.length, selectedProfile=null, selectedRows=new Set(), activeFilter='all', editCell=null, expFields={}, recBanner=null;
+let view='db', scrubPos=events.length, selectedProfile=null, selectedRows=new Set(), activeFilter='all', editCell=null, expFields={}, recBanner=null, perspectiveUser=null;
 let derivedViews=[]; let activeTab='records'; let cmdResult=null;
 
 // Per-field conflict resolution policy: 'hold' (default) | 'newest' | 'oldest' | 'ask'
 let fieldPolicies = {}; // fieldKey -> policy string
 const isNow=()=>scrubPos>=events.length;
-const getS=()=>replayTo(isNow()?events.length:scrubPos);
+function applyPerspective(S){
+  if(!perspectiveUser) return S;
+  const records=S.records.map(r=>{
+    const rec={...r,_notByUser:{}};
+    const recStacks=S.stacks[r.uid];
+    if(!recStacks) {fields.filter(f=>f.layer==='given').forEach(f=>{rec._notByUser[f.key]=true;});return rec;}
+    fields.filter(f=>f.layer==='given').forEach(f=>{
+      const claims=recStacks[f.key];
+      if(!claims||!claims.length){rec._notByUser[f.key]=true;return;}
+      const userClaims=claims.filter(c=>c.agent===perspectiveUser);
+      if(userClaims.length){rec[f.key]=userClaims[userClaims.length-1].value;}
+      else{rec._notByUser[f.key]=true;}
+    });
+    return rec;
+  });
+  return {...S,records,_perspective:perspectiveUser};
+}
+const getS=()=>applyPerspective(replayTo(isNow()?events.length:scrubPos));
 
 // ═════════════════════════════════════════════════════════════════════════════
 // LOG RENDERING
@@ -533,7 +563,7 @@ function renderProfileLog(){
 }
 
 function render(){
-  renderScrubber();renderRecBan();renderLog();renderDTabs();
+  renderScrubber();renderHorizon();renderRecBan();renderLog();renderDTabs();
   if(view==='db')renderDB();else renderProfile();
   const re=document.getElementById('cmdRes');
   if(!cmdResult){re.style.display='none';}else{re.style.display='flex';re.className='cmd-result'+(cmdResult.error?' cmd-error':'');re.innerHTML=cmdResult.text+`<button class="b b-sm" style="margin-left:auto" onclick="cmdResult=null;render()">×</button>`;}
@@ -547,13 +577,29 @@ function renderScrubber(){
     <button class="b b-sm${now?' b-primary':''}" onclick="scrubPos=events.length;render()">Now</button>
     ${!now?`<button class="b b-sm" onclick="scrubPos=Math.max(1,scrubPos-1);render()">←</button><button class="b b-sm" onclick="scrubPos=Math.min(events.length,scrubPos+1);render()">→</button><span class="scrub-info">Event ${scrubPos}/${events.length}</span>`:''}`;
 }
+function renderHorizon(){
+  const el=document.getElementById('horizonBar');const now=isNow();
+  const timeLabel=now?'present':fmtDate(events[scrubPos-1]?.ts);
+  const relevantEvents=now?events:events.slice(0,scrubPos);
+  const agents=[...new Set(relevantEvents.map(e=>e.agent))].sort();
+  const S=replayTo(isNow()?events.length:scrubPos);
+  const fwLabels=[...new Set(Object.values(S.frameworks).map(fw=>fw.name))];
+  const agentSelect=`<select class="hz-select" onchange="perspectiveUser=this.value==='all'?null:this.value;render()">
+    <option value="all"${!perspectiveUser?' selected':''}>composite (all users)</option>
+    ${agents.map(a=>`<option value="${esc(a)}"${perspectiveUser===a?' selected':''}>${esc(a)}</option>`).join('')}
+  </select>`;
+  el.innerHTML=`<span class="hz-label">Projection</span>
+    <span class="hz-param"><span class="hz-dim">time:</span> <span class="hz-val">${esc(timeLabel)}</span></span>
+    <span class="hz-param"><span class="hz-dim">user:</span> ${agentSelect}</span>
+    <span class="hz-param"><span class="hz-dim">framework:</span> <span class="hz-val">${esc(fwLabels.join(' + ')||'none')}</span></span>`;
+}
 function renderRecBan(){const el=document.getElementById('recBan');if(!recBanner||!isNow()){el.innerHTML='';return;}el.innerHTML=`<div class="rec-banner"><button class="b b-sm" style="float:right" onclick="recBanner=null;render()">Dismiss</button>${recBanner}</div>`;}
 function renderDTabs(){
   const el=document.getElementById('dtabs');
   if(!derivedViews.length){el.style.display='none';return;}
   el.style.display='flex';
   el.innerHTML=`<div class="dtab${activeTab==='records'?' on':''}" onclick="activeTab='records';render()">All Records</div>`+
-    derivedViews.map(v=>`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()">${esc(v.name)}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`).join('');
+    derivedViews.map(v=>{const ot=v.origin?`Projected at ${v.origin.time}, user: ${v.origin.user}, fw: ${v.origin.frameworks.join('+')}`:'';return`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()" title="${esc(ot)}">${esc(v.name)}${v.origin?'<span class="dtab-origin">projected</span>':''}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`;}).join('');
   Object.keys(customTables).forEach(k=>{
     el.innerHTML+=`<div class="dtab${activeTab===k?' on':''}" onclick="activeTab='${k}';render()">${esc(customTables[k].label)}</div>`;
   });
@@ -621,11 +667,15 @@ function renderDB(){
             if(f.type==='select')return`<td><select class=c-edit onchange="commitEd('${r.uid}','${f.key}',this.value)" onblur="setTimeout(()=>{if(editCell){editCell=null;render();}},0)">${f.opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select></td>`;
             return`<td><input class=c-edit value="${esc(val||'')}" id=edI onkeydown="if(event.key==='Enter')commitEd('${r.uid}','${f.key}',this.value);if(event.key==='Escape'){editCell=null;render()}" onblur="setTimeout(()=>commitEd('${r.uid}','${f.key}',this.value),0)"></td>`;
           }
+          const stk=S.stacks[r.uid]?.[f.key];const latest=stk?.length?stk[stk.length-1]:null;
+          const provAgent=latest?.agent||'';const provMode=latest?.mode||'';
+          const isOther=perspectiveUser&&r._notByUser?.[f.key];
+          const provSpan=provAgent?`<span class="c-prov">${esc(provAgent)} · ${provMode}</span>`:'';
           if(val==null){
             const at=absTypes[sk];const lbl=at==='cleared'?'recorded absent':'not yet collected';const cls=at==='cleared'?'c-nt-clr':'c-nt-nc';
-            return`<td class="c-null"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span></td>`;
+            return`<td class="c-null${isOther?' c-other-perspective':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span>${provSpan}</td>`;
           }
-          return`<td class="${isSup?'c-sup':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}>${esc(val)}${isSup?'<span class=c-sup-tag>conflict</span><span class=c-sup-resolve onclick="event.stopPropagation();showCellCtx(event,\''+r.uid+'\',\''+f.key+'\')">resolve</span>':''}${!past?`<span class=ha><button class=mb onclick="startEd('${r.uid}','${f.key}')">✎</button></span>`:''}</td>`;
+          return`<td class="${isSup?'c-sup':''}${isOther?' c-other-perspective':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}>${esc(val)}${provSpan}${isSup?'<span class=c-sup-tag>conflict</span><span class=c-sup-resolve onclick="event.stopPropagation();showCellCtx(event,\''+r.uid+'\',\''+f.key+'\')">resolve</span>':''}${!past?`<span class=ha><button class=mb onclick="startEd('${r.uid}','${f.key}')">✎</button></span>`:''}</td>`;
         }).join('')}
         ${!past&&activeTab==='records'?`<td><button class=mb onclick="pushEv('NUL','${r.uid}');delete liveData['${r.uid}'];scrubPos=events.length;render()">×</button></td>`:''}
       </tr>`;
@@ -1022,7 +1072,7 @@ function parseCMD(raw){
       const pf=parseFilter(filter);
       const filtered=S.records.filter(r=>{const v=r[pf.field];if(v==null)return false;if(pf.op==='=')return String(v)===pf.value;if(pf.op==='>')return parseFloat(String(v).replace(/[^0-9.]/g,''))>parseFloat(pf.value);return false;});
       pushEv('SEG',null,null,filter,{meta:{filterExpr:filter}});
-      derivedViews.push({id:'seg_'+Date.now(),name:filter,records:filtered});activeTab=derivedViews[derivedViews.length-1].id;
+      derivedViews.push({id:'seg_'+Date.now(),name:filter,records:filtered,origin:{time:isNow()?'present':fmtDate(events[scrubPos-1]?.ts),user:perspectiveUser||'all users',frameworks:[...new Set(Object.values(S.frameworks).map(fw=>fw.name))]}});activeTab=derivedViews[derivedViews.length-1].id;
       return`${filtered.length} records → "${filter}"`;
     }
     case'SYN':{
@@ -1213,6 +1263,10 @@ function renderProfile(){
     fH+=`<div class="fb${isSup?' contested':''}" oncontextmenu="showCellCtx(event,'${r.uid}','${gf.key}')"><div class="fb-head">${esc(label)}</div>${layers}</div>`;
   });
 
+  const perspNotice=perspectiveUser
+    ?`<div class="hz-profile-notice">Projected through <b>${esc(perspectiveUser)}</b>. Fields not observed by this user show composite values at reduced opacity.</div>`
+    :`<div class="hz-profile-notice">Composite projection — all users' observations.</div>`;
+
   // ── Event count for this person ──
   const evtCount=events.filter(e=>e.target===r.uid).length;
 
@@ -1234,6 +1288,7 @@ function renderProfile(){
       </div>
     </div>
     <div class="pw-inner">
+      ${perspNotice}
       ${attn}
       <div class="p-cards">${cardsH}</div>
       ${connH}
