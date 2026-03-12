@@ -565,8 +565,6 @@ function showToast(ev){
 function showV(v){view=v;document.getElementById('tDB').classList.toggle('on',v==='db');document.getElementById('tPR').classList.toggle('on',v==='profile');
   ['toolbar','dbV','cmdBar'].forEach(id=>document.getElementById(id).style.display=v==='db'?'':'none');
   document.getElementById('profV').className='pw'+(v==='profile'?' on':'');
-  // Hide event log sidebar in profile view, show it in db view
-  document.querySelector('.lp').style.display=v==='profile'?'none':'';
   render();}
 
 function toggleProfileLog(){
