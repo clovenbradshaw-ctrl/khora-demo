@@ -356,7 +356,7 @@ function pushEv(op,target,field,value,x={}) {
   evtN++;
   const ev = {id:evtN, ts:x.ts||new Date().toISOString(), op, target:target||null, field:field||null,
     value:value!==undefined?value:null, oldValue:x.oldValue??null,
-    agent:x.agent||'Lorem', mode:x.mode||'declared', note:x.note||null,
+    agent:x.agent||U_REYES, mode:x.mode||'declared', note:x.note||null,
     meta:x.meta||null, parentId:x.parentId||null, table:x.table||'records'};
   events.push(ev);
   if (!x.ts && !x.silent) showToast(ev);
@@ -404,6 +404,19 @@ function liveSet(uid, field, value) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+// USERS
+// ═════════════════════════════════════════════════════════════════════════════
+const users = {
+  'u-7a3f-reyes':   {id:'u-7a3f-reyes',   name:'Maria Reyes',    role:'Case Manager'},
+  'u-9b1c-carter':  {id:'u-9b1c-carter',  name:'Devon Carter',   role:'Case Manager'},
+  'u-4e2d-crisis':  {id:'u-4e2d-crisis',  name:'Crisis Team',    role:'Crisis Response'},
+  'u-8f0a-benefits':{id:'u-8f0a-benefits', name:'Benefits System', role:'Integration'},
+  'u-0000-system':  {id:'u-0000-system',  name:'System',          role:'Automated'},
+};
+const U_REYES='u-7a3f-reyes', U_CARTER='u-9b1c-carter', U_CRISIS='u-4e2d-crisis', U_BENEFITS='u-8f0a-benefits', U_SYSTEM='u-0000-system';
+function uName(uid) { return users[uid]?.name || uid; }
+
+// ═════════════════════════════════════════════════════════════════════════════
 // SEED
 // ═════════════════════════════════════════════════════════════════════════════
 function seed() {
@@ -412,42 +425,42 @@ function seed() {
   p('SIG',null,null,'schema',{ts:T(8,10),meta:{tblSig:'SIG(table:records, 9 fields)'}});
 
   const ppl = [
-    {a:'@001a',n:'Hassan, Aaliya',ph:'615-555-0147',h:'Couch-surfing, no lease',inc:'$980',ins:'TennCare',eb:'New intake, meets criteria',ns:'Follow up on housing voucher'},
-    {a:'@002b',n:'Park, James',ph:'615-555-0283',h:'Lease on file, stable',inc:'$2,100',ins:'Private',eb:'Enrolled in housing program',ns:'Benefits renewal'},
-    {a:'@003c',n:'Okafor, Nneka',ph:'615-555-0391',h:'Sleeping in vehicle',inc:'$640',ins:'None',eb:'New intake, meets criteria',ns:'Shelter intake referral'},
-    {a:'@004d',n:'Torres, Miguel',ph:'615-555-0455',h:'Eviction notice received',inc:'$1,200',ins:'TennCare',eb:'Non-responsive 30+ days',ns:'Re-engagement outreach'},
-    {a:'@005e',n:'Williams, DeShawn',ph:null,h:'Staying with family, no lease',inc:'$1,850',ins:'TennCare',eb:'New intake, meets criteria',ns:'Employment check-in'},
+    {a:'@001a',n:'Hassan, Aaliya',ph:'615-555-0147',h:'Couch-surfing, no lease',inc:'$980',ins:'TennCare',eb:'New intake, meets criteria',ns:'Follow up on housing voucher',ag:U_REYES},
+    {a:'@002b',n:'Park, James',ph:'615-555-0283',h:'Lease on file, stable',inc:'$2,100',ins:'Private',eb:'Enrolled in housing program',ns:'Benefits renewal',ag:U_REYES},
+    {a:'@003c',n:'Okafor, Nneka',ph:'615-555-0391',h:'Sleeping in vehicle',inc:'$640',ins:'None',eb:'New intake, meets criteria',ns:'Shelter intake referral',ag:U_CARTER},
+    {a:'@004d',n:'Torres, Miguel',ph:'615-555-0455',h:'Eviction notice received',inc:'$1,200',ins:'TennCare',eb:'Non-responsive 30+ days',ns:'Re-engagement outreach',ag:U_CARTER},
+    {a:'@005e',n:'Williams, DeShawn',ph:null,h:'Staying with family, no lease',inc:'$1,850',ins:'TennCare',eb:'New intake, meets criteria',ns:'Employment check-in',ag:U_REYES},
   ];
 
   ppl.forEach((r,i)=>{
     const t = T(8,15+i);
-    p('INS',r.a,null,r.n,{ts:t});
+    p('INS',r.a,null,r.n,{ts:t,agent:r.ag});
     liveData[r.a] = {};
     const vals = {name:r.n, phone:r.ph, housing:r.h, income:r.inc, insurance:r.ins, enrollment_basis:r.eb, next_step:r.ns};
     Object.entries(vals).forEach(([k,v])=>{
-      if (v) { p('SIG',r.a,k,v,{ts:t}); liveSet(r.a,k,v); }
-      else { p('NUL',r.a,k,null,{ts:t}); absTypes[r.a+'.'+k]='not-collected'; }
+      if (v) { p('SIG',r.a,k,v,{ts:t,agent:r.ag}); liveSet(r.a,k,v); }
+      else { p('NUL',r.a,k,null,{ts:t,agent:r.ag}); absTypes[r.a+'.'+k]='not-collected'; }
     });
     // Emit the derived meant values
     const hc = deriveMeant('housing', r.h);
-    if (hc) p('SIG',r.a,'housing_class',hc,{ts:t,mode:'inferred',agent:'System'});
+    if (hc) p('SIG',r.a,'housing_class',hc,{ts:t,mode:'inferred',agent:U_SYSTEM});
     const st = deriveMeant('enrollment', r.eb);
-    if (st) p('SIG',r.a,'status',st,{ts:t,mode:'inferred',agent:'System'});
+    if (st) p('SIG',r.a,'status',st,{ts:t,mode:'inferred',agent:U_SYSTEM});
   });
 
   // Aaliya history
-  p('ALT','@001a','housing','Sleeping in vehicle',{ts:T(10,22),agent:'Crisis Team',mode:'observed',oldValue:'Couch-surfing, no lease'});
+  p('ALT','@001a','housing','Sleeping in vehicle',{ts:T(10,22),agent:U_CRISIS,mode:'observed',oldValue:'Couch-surfing, no lease'});
   liveSet('@001a','housing','Sleeping in vehicle');
-  p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:'System',mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
+  p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:U_SYSTEM,mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
 
-  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Lorem',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
+  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:U_REYES,mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
   liveSet('@001a','housing','Couch-surfing, no lease');
-  p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:'System',mode:'inferred',oldValue:'Literally homeless'});
+  p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:U_SYSTEM,mode:'inferred',oldValue:'Literally homeless'});
 
-  p('ALT','@001a','income','$980',{ts:T(12,2),agent:'Aaliya Hassan',mode:'declared',oldValue:'$1,240',note:'Hours reduced'});
+  p('ALT','@001a','income','$980',{ts:T(12,2),agent:'@001a',mode:'declared',oldValue:'$1,240',note:'Hours reduced'});
   liveData['@001a'].income='$980';
 
-  p('SUP','@001a','income','$1,100',{ts:'2025-01-10T09:00:00Z',agent:'Benefits System',mode:'measured',oldValue:'$980',note:'Verification discrepancy'});
+  p('SUP','@001a','income','$1,100',{ts:'2025-01-10T09:00:00Z',agent:U_BENEFITS,mode:'measured',oldValue:'$980',note:'Verification discrepancy'});
 
   p('CON','@001a',null,'@003c',{ts:T(9,20),note:'Emergency contact'});
 }
@@ -604,7 +617,7 @@ function renderHorizon(){
   const fwLabels=[...new Set(Object.values(S.frameworks).map(fw=>fw.name))];
   const agentSelect=`<select class="hz-select" onchange="perspectiveUser=this.value==='all'?null:this.value;render()">
     <option value="all"${!perspectiveUser?' selected':''}>composite (all users)</option>
-    ${agents.map(a=>`<option value="${esc(a)}"${perspectiveUser===a?' selected':''}>${esc(a)}</option>`).join('')}
+    ${agents.map(a=>`<option value="${esc(a)}"${perspectiveUser===a?' selected':''}>${esc(uName(a))}</option>`).join('')}
   </select>`;
   el.innerHTML=`<span class="hz-label">Projection</span>
     <span class="hz-param"><span class="hz-dim">time:</span> <span class="hz-val">${esc(timeLabel)}</span></span>
@@ -688,7 +701,7 @@ function renderDB(){
           const stk=S.stacks[r.uid]?.[f.key];const latest=stk?.length?stk[stk.length-1]:null;
           const provAgent=latest?.agent||'';const provMode=latest?.mode||'';
           const isOther=perspectiveUser&&r._notByUser?.[f.key];
-          const provSpan=provAgent?`<span class="c-prov">${esc(provAgent)} · ${provMode}</span>`:'';
+          const provSpan=provAgent?`<span class="c-prov">${esc(uName(provAgent))} · ${provMode}</span>`:'';
           if(val==null){
             const at=absTypes[sk];const lbl=at==='cleared'?'recorded absent':'not yet collected';const cls=at==='cleared'?'c-nt-clr':'c-nt-nc';
             return`<td class="c-null${isOther?' c-other-perspective':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span>${provSpan}</td>`;
@@ -732,7 +745,7 @@ function commitEd(uid,field,newVal){
       const oldMeant=old?fw.mapping[old]||null:null;
       const newMeant=newVal?fw.mapping[newVal]||null:null;
       if(oldMeant!==newMeant){
-        pushEv('ALT',uid,fw.meantField,newMeant,{oldValue:oldMeant,agent:'System',mode:'inferred',note:`Derived: ${newVal} → ${newMeant} per ${fw.name}`});
+        pushEv('ALT',uid,fw.meantField,newMeant,{oldValue:oldMeant,agent:U_SYSTEM,mode:'inferred',note:`Derived: ${newVal} → ${newMeant} per ${fw.name}`});
       }
     }
   }
@@ -860,11 +873,11 @@ window.showCellCtx=(e,uid,fk)=>{
     supInfo=`<div class="ctx-resolve">
       <div class="ctx-resolve-title">Conflicting sources — choose one to resolve</div>
       <div class="ctx-resolve-opt">
-        <div class="ctx-resolve-val">${esc(s.a.value)} <span class="ctx-resolve-src">${esc(s.a.agent)}</span></div>
+        <div class="ctx-resolve-val">${esc(s.a.value)} <span class="ctx-resolve-src">${esc(uName(s.a.agent))}</span></div>
         <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept</button>
       </div>
       <div class="ctx-resolve-opt">
-        <div class="ctx-resolve-val">${esc(s.b.value)} <span class="ctx-resolve-src">${esc(s.b.agent)} · ${s.b.mode||'declared'}</span></div>
+        <div class="ctx-resolve-val">${esc(s.b.value)} <span class="ctx-resolve-src">${esc(uName(s.b.agent))} · ${s.b.mode||'declared'}</span></div>
         <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept</button>
       </div>
     </div>`;
@@ -908,7 +921,7 @@ window.submitCellAlt=(uid,fk)=>{
   const agentEl=document.getElementById('ctxAltAgent');
   if(!valEl)return;
   const newVal=valEl.value.trim();if(!newVal)return;
-  const agent=agentEl?.value.trim()||'Alternative source';
+  const agent=agentEl?.value.trim()||U_REYES;
   const old=liveData[uid]?.[fk];
 
   // Check conflict policy
@@ -920,7 +933,7 @@ window.submitCellAlt=(uid,fk)=>{
     liveSet(uid,fk,newVal);
     // Derive meant if needed
     for(const[fwKey,fw]of Object.entries(frameworks)){
-      if(fw.givenField===fk){const om=fw.mapping[old]||null;const nm=fw.mapping[newVal]||null;if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred'});}
+      if(fw.givenField===fk){const om=fw.mapping[old]||null;const nm=fw.mapping[newVal]||null;if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:U_SYSTEM,mode:'inferred'});}
     }
   } else if(policy==='oldest'){
     // Keep existing, just log the competing claim
@@ -938,7 +951,7 @@ window.resolveConflict=(uid,fk,acceptedValue,rejectedValue,sourceAgent)=>{
   const old=liveData[uid]?.[fk];
   // SIG: user signals their selection from the competing values
   const sigEv=pushEv('SIG',uid,fk,acceptedValue,{
-    note:`Selected "${acceptedValue}" (${sourceAgent||'prior'}) over "${rejectedValue}"`
+    note:`Selected "${acceptedValue}" (${uName(sourceAgent)||'prior'}) over "${rejectedValue}"`
   });
   // ALT: the selection triggers the value change, dissolving the SUP
   pushEv('ALT',uid,fk,acceptedValue,{
@@ -952,7 +965,7 @@ window.resolveConflict=(uid,fk,acceptedValue,rejectedValue,sourceAgent)=>{
     if(fw.givenField===fk){
       const om=fw.mapping[old]||null;
       const nm=fw.mapping[acceptedValue]||null;
-      if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred',parentId:sigEv.id});
+      if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:U_SYSTEM,mode:'inferred',parentId:sigEv.id});
     }
   }
   scrubPos=events.length;closeCtx();render();
@@ -1036,7 +1049,7 @@ window.doREC=(fwKey)=>{
     const oldMeant=data[fw.meantField];
     const newMeant=givenVal?newMapping[givenVal]||null:null;
     if(oldMeant!==newMeant){
-      pushEv('ALT',uid,fw.meantField,newMeant,{oldValue:oldMeant,agent:'System',mode:'inferred',parentId:recEv.id,silent:true,note:`Reclassified: ${oldMeant} → ${newMeant}`});
+      pushEv('ALT',uid,fw.meantField,newMeant,{oldValue:oldMeant,agent:U_SYSTEM,mode:'inferred',parentId:recEv.id,silent:true,note:`Reclassified: ${oldMeant} → ${newMeant}`});
       data[fw.meantField]=newMeant;
     }
   });
@@ -1059,7 +1072,7 @@ window.addRecord=()=>{
       if(vals[f.key]){pushEv('SIG',uid,f.key,vals[f.key]);liveSet(uid,f.key,vals[f.key]);
         // Emit derived meant
         for(const[fwKey,fw]of Object.entries(frameworks)){
-          if(fw.givenField===f.key){const m=deriveMeant(fwKey,vals[f.key]);if(m)pushEv('SIG',uid,fw.meantField,m,{agent:'System',mode:'inferred'});}
+          if(fw.givenField===f.key){const m=deriveMeant(fwKey,vals[f.key]);if(m)pushEv('SIG',uid,fw.meantField,m,{agent:U_SYSTEM,mode:'inferred'});}
         }
       } else absTypes[uid+'.'+f.key]='not-collected';
     });
@@ -1145,14 +1158,14 @@ function parseCMD(raw){
       if(r[dotM[2]]==null)throw new Error(`${dotM[1]}.${dotM[2]} has no value. INS first.`);
       const old=r[dotM[2]];pushEv('ALT',dotM[1],dotM[2],nv,{oldValue:old});liveSet(dotM[1],dotM[2],nv);
       // Auto-derive
-      for(const[fwKey,fw]of Object.entries(frameworks)){if(fw.givenField===dotM[2]){const om=fw.mapping[old]||null;const nm=fw.mapping[nv]||null;if(om!==nm)pushEv('ALT',dotM[1],fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred'});}}
+      for(const[fwKey,fw]of Object.entries(frameworks)){if(fw.givenField===dotM[2]){const om=fw.mapping[old]||null;const nm=fw.mapping[nv]||null;if(om!==nm)pushEv('ALT',dotM[1],fw.meantField,nm,{oldValue:om,agent:U_SYSTEM,mode:'inferred'});}}
       return`${old} → ${nv}`;
     }
     case'CON':{if(args.length<2)throw new Error('CON(@uid1, @uid2)');pushEv('CON',args[0].trim(),null,args[1].trim(),{note:args[2]?.replace(/"/g,'')||'linked'});return'Linked';}
-    case'SUP':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);const v=args[1]?.replace(/"/g,'');if(!dotM||!v)throw new Error('SUP(@uid.field, "value")');const f=fields.find(x=>x.key===dotM[2]);if(f?.layer==='meant')throw new Error('SUP only applies to Given fields. Meant fields are derived.');const r=S.records.find(x=>x.uid===dotM[1]);if(!r)throw new Error(`${dotM[1]} not found`);pushEv('SUP',dotM[1],dotM[2],v,{agent:'External',mode:'measured',oldValue:r[dotM[2]]});return'Conflict held';}
+    case'SUP':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);const v=args[1]?.replace(/"/g,'');if(!dotM||!v)throw new Error('SUP(@uid.field, "value")');const f=fields.find(x=>x.key===dotM[2]);if(f?.layer==='meant')throw new Error('SUP only applies to Given fields. Meant fields are derived.');const r=S.records.find(x=>x.uid===dotM[1]);if(!r)throw new Error(`${dotM[1]} not found`);pushEv('SUP',dotM[1],dotM[2],v,{agent:U_BENEFITS,mode:'measured',oldValue:r[dotM[2]]});return'Conflict held';}
     case'NUL':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(dotM){pushEv('NUL',dotM[1],dotM[2]);absTypes[dotM[1]+'.'+dotM[2]]='cleared';if(liveData[dotM[1]])liveData[dotM[1]][dotM[2]]=null;return'Absence recorded';}pushEv('NUL',args[0].trim());delete liveData[args[0].trim()];return'Entity removed';}
     case'REC':{const fwKey=Object.keys(frameworks).find(k=>args[0].trim().includes(k));if(fwKey){openREC(fwKey);return'Opening REC dialog...';}throw new Error('REC(housing) or REC(enrollment)');}
-    case'SOURCE':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(!dotM)throw new Error('SOURCE(@uid.field)');const st=S.stacks[dotM[1]]?.[dotM[2]];if(!st?.length)return'No claims found';return st.map(c=>`${c.op}("${c.value||'∅'}") by ${c.agent}, ${c.mode}`).join(' → ');}
+    case'SOURCE':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(!dotM)throw new Error('SOURCE(@uid.field)');const st=S.stacks[dotM[1]]?.[dotM[2]];if(!st?.length)return'No claims found';return st.map(c=>`${c.op}("${c.value||'∅'}") by ${uName(c.agent)}, ${c.mode}`).join(' → ');}
     default:throw new Error(`Unknown: ${op}`);
   }
 }
@@ -1261,18 +1274,18 @@ function renderProfile(){
       givenH=`<span class="fb-val">${esc(val)}</span>`;
     }
 
-    const meta=latest?`<span class="fb-meta">${esc(latest.agent)} · ${latest.mode} · ${fmtDate(latest.ts)}</span>`:'';
+    const meta=latest?`<span class="fb-meta">${esc(uName(latest.agent))} · ${latest.mode} · ${fmtDate(latest.ts)}</span>`:'';
     const acts=!past&&!editCell?`<span class="fb-acts"><button class=mb onclick="editCell={uid:'${r.uid}',field:'${gf.key}'};render();setTimeout(()=>{const i=document.getElementById('pEI');if(i){i.focus();i.select();}},30)">✎</button>${val!=null?`<button class=mb onclick="pushEv('NUL','${r.uid}','${gf.key}');absTypes['${r.uid}.${gf.key}']='cleared';if(liveData['${r.uid}'])liveData['${r.uid}']['${gf.key}']=null;scrubPos=events.length;render()">∅</button>`:''}</span>`:'';
 
     let layers=`<div class="fb-row"><span class="fb-tag fb-tag-g">given</span>${givenH}${meta}${acts}</div>`;
 
     if(isSup){const s=S.sups[sk];layers+=`<div class="sup-blk"><div class="sup-t">Conflicting sources — resolve by accepting one</div>
-      <div class="sup-opt"><div>${esc(s.a.value)} <span class="sup-src">${s.a.agent}</span></div>${!past?`<button class="b b-sm" onclick="resolveConflict('${r.uid}','${gf.key}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept</button>`:''}</div>
-      <div class="sup-opt"><div>${esc(s.b.value)} <span class="sup-src">${s.b.agent} · ${s.b.mode||'declared'}</span></div>${!past?`<button class="b b-sm" onclick="resolveConflict('${r.uid}','${gf.key}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept</button>`:''}</div></div>`;}
+      <div class="sup-opt"><div>${esc(s.a.value)} <span class="sup-src">${uName(s.a.agent)}</span></div>${!past?`<button class="b b-sm" onclick="resolveConflict('${r.uid}','${gf.key}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept</button>`:''}</div>
+      <div class="sup-opt"><div>${esc(s.b.value)} <span class="sup-src">${uName(s.b.agent)} · ${s.b.mode||'declared'}</span></div>${!past?`<button class="b b-sm" onclick="resolveConflict('${r.uid}','${gf.key}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept</button>`:''}</div></div>`;}
 
     if(prior.length){
       layers+=`<div style="padding-left:54px"><button class="ht" onclick="expFields['${sk}']=!expFields['${sk}'];render()">${exp?'Hide':'Show'} ${prior.length} prior</button></div>`;
-      if(exp)layers+=`<div class="cc" style="margin-left:54px">${prior.reverse().map(c=>`<div class="cl-row"><span class="cl-op op-${c.op.toLowerCase()}">${c.op}</span><span class="cl-old">${esc(c.value||'∅')}</span><span>${esc(c.agent)} · ${c.mode} · ${fmtDate(c.ts)}${c.note?' · '+esc(c.note):''}</span></div>`).join('')}</div>`;
+      if(exp)layers+=`<div class="cc" style="margin-left:54px">${prior.reverse().map(c=>`<div class="cl-row"><span class="cl-op op-${c.op.toLowerCase()}">${c.op}</span><span class="cl-old">${esc(c.value||'∅')}</span><span>${esc(uName(c.agent))} · ${c.mode} · ${fmtDate(c.ts)}${c.note?' · '+esc(c.note):''}</span></div>`).join('')}</div>`;
     }
 
     if(meantField&&fwObj){
