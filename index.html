@@ -1082,7 +1082,6 @@ const acOps = [
   {key:'SUP', label:'Supersede — hold conflict', hint:'SUP(@uid.field, "value")'},
   {key:'CON', label:'Connect — link entities', hint:'CON(@uid1, @uid2)'},
   {key:'REC', label:'Recalculate — change framework', hint:'REC(housing) or REC(enrollment)'},
-  {key:'SOURCE', label:'Source — view claim history', hint:'SOURCE(@uid.field)'},
 ];
 
 let acSel = 0; // selected index in dropdown
@@ -1191,7 +1190,7 @@ function acSuggest(raw, cursor) {
   }
 
   // --- SIG / ALT / NUL / SUP / SOURCE — @uid.field context ---
-  if (['SIG','ALT','NUL','SUP','SOURCE'].includes(op)) {
+  if (['SIG','ALT','NUL','SUP'].includes(op)) {
     // After @uid. → suggest field names
     const dotMatch = inner.match(/^(@\w+)\.(\w*)$/);
     if (dotMatch) {
