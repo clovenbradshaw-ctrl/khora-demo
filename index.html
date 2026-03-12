@@ -404,6 +404,18 @@ function liveSet(uid, field, value) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+// USERS
+// ═════════════════════════════════════════════════════════════════════════════
+const users = {
+  mreyes:  {id:'mreyes',  name:'Maria Reyes',   role:'Case Manager'},
+  dcarter: {id:'dcarter', name:'Devon Carter',   role:'Case Manager'},
+  crisis:  {id:'crisis',  name:'Crisis Team',    role:'Crisis Response'},
+  benefits:{id:'benefits',name:'Benefits System', role:'Integration'},
+  system:  {id:'system',  name:'System',          role:'Automated'},
+};
+function uName(uid) { return users[uid]?.name || uid; }
+
+// ═════════════════════════════════════════════════════════════════════════════
 // SEED
 // ═════════════════════════════════════════════════════════════════════════════
 function seed() {
@@ -412,42 +424,42 @@ function seed() {
   p('SIG',null,null,'schema',{ts:T(8,10),meta:{tblSig:'SIG(table:records, 9 fields)'}});
 
   const ppl = [
-    {a:'@001a',n:'Hassan, Aaliya',ph:'615-555-0147',h:'Couch-surfing, no lease',inc:'$980',ins:'TennCare',eb:'New intake, meets criteria',ns:'Follow up on housing voucher',ag:'Maria Reyes'},
-    {a:'@002b',n:'Park, James',ph:'615-555-0283',h:'Lease on file, stable',inc:'$2,100',ins:'Private',eb:'Enrolled in housing program',ns:'Benefits renewal',ag:'Maria Reyes'},
-    {a:'@003c',n:'Okafor, Nneka',ph:'615-555-0391',h:'Sleeping in vehicle',inc:'$640',ins:'None',eb:'New intake, meets criteria',ns:'Shelter intake referral',ag:'Devon Carter'},
-    {a:'@004d',n:'Torres, Miguel',ph:'615-555-0455',h:'Eviction notice received',inc:'$1,200',ins:'TennCare',eb:'Non-responsive 30+ days',ns:'Re-engagement outreach',ag:'Devon Carter'},
-    {a:'@005e',n:'Williams, DeShawn',ph:null,h:'Staying with family, no lease',inc:'$1,850',ins:'TennCare',eb:'New intake, meets criteria',ns:'Employment check-in',ag:'Maria Reyes'},
+    {a:'@001a',n:'Hassan, Aaliya',ph:'615-555-0147',h:'Couch-surfing, no lease',inc:'$980',ins:'TennCare',eb:'New intake, meets criteria',ns:'Follow up on housing voucher',ag:'mreyes'},
+    {a:'@002b',n:'Park, James',ph:'615-555-0283',h:'Lease on file, stable',inc:'$2,100',ins:'Private',eb:'Enrolled in housing program',ns:'Benefits renewal',ag:'mreyes'},
+    {a:'@003c',n:'Okafor, Nneka',ph:'615-555-0391',h:'Sleeping in vehicle',inc:'$640',ins:'None',eb:'New intake, meets criteria',ns:'Shelter intake referral',ag:'dcarter'},
+    {a:'@004d',n:'Torres, Miguel',ph:'615-555-0455',h:'Eviction notice received',inc:'$1,200',ins:'TennCare',eb:'Non-responsive 30+ days',ns:'Re-engagement outreach',ag:'dcarter'},
+    {a:'@005e',n:'Williams, DeShawn',ph:null,h:'Staying with family, no lease',inc:'$1,850',ins:'TennCare',eb:'New intake, meets criteria',ns:'Employment check-in',ag:'mreyes'},
   ];
 
   ppl.forEach((r,i)=>{
     const t = T(8,15+i);
-    p('INS',r.a,null,r.n,{ts:t,agent:r.ag});
+    p('INS',r.a,null,r.n,{ts:t,agent:uName(r.ag)});
     liveData[r.a] = {};
     const vals = {name:r.n, phone:r.ph, housing:r.h, income:r.inc, insurance:r.ins, enrollment_basis:r.eb, next_step:r.ns};
     Object.entries(vals).forEach(([k,v])=>{
-      if (v) { p('SIG',r.a,k,v,{ts:t,agent:r.ag}); liveSet(r.a,k,v); }
-      else { p('NUL',r.a,k,null,{ts:t,agent:r.ag}); absTypes[r.a+'.'+k]='not-collected'; }
+      if (v) { p('SIG',r.a,k,v,{ts:t,agent:uName(r.ag)}); liveSet(r.a,k,v); }
+      else { p('NUL',r.a,k,null,{ts:t,agent:uName(r.ag)}); absTypes[r.a+'.'+k]='not-collected'; }
     });
     // Emit the derived meant values
     const hc = deriveMeant('housing', r.h);
-    if (hc) p('SIG',r.a,'housing_class',hc,{ts:t,mode:'inferred',agent:'System'});
+    if (hc) p('SIG',r.a,'housing_class',hc,{ts:t,mode:'inferred',agent:uName('system')});
     const st = deriveMeant('enrollment', r.eb);
-    if (st) p('SIG',r.a,'status',st,{ts:t,mode:'inferred',agent:'System'});
+    if (st) p('SIG',r.a,'status',st,{ts:t,mode:'inferred',agent:uName('system')});
   });
 
   // Aaliya history
-  p('ALT','@001a','housing','Sleeping in vehicle',{ts:T(10,22),agent:'Crisis Team',mode:'observed',oldValue:'Couch-surfing, no lease'});
+  p('ALT','@001a','housing','Sleeping in vehicle',{ts:T(10,22),agent:uName('crisis'),mode:'observed',oldValue:'Couch-surfing, no lease'});
   liveSet('@001a','housing','Sleeping in vehicle');
-  p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:'System',mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
+  p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:uName('system'),mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
 
-  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Maria Reyes',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
+  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:uName('mreyes'),mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
   liveSet('@001a','housing','Couch-surfing, no lease');
-  p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:'System',mode:'inferred',oldValue:'Literally homeless'});
+  p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:uName('system'),mode:'inferred',oldValue:'Literally homeless'});
 
   p('ALT','@001a','income','$980',{ts:T(12,2),agent:'Aaliya Hassan',mode:'declared',oldValue:'$1,240',note:'Hours reduced'});
   liveData['@001a'].income='$980';
 
-  p('SUP','@001a','income','$1,100',{ts:'2025-01-10T09:00:00Z',agent:'Benefits System',mode:'measured',oldValue:'$980',note:'Verification discrepancy'});
+  p('SUP','@001a','income','$1,100',{ts:'2025-01-10T09:00:00Z',agent:uName('benefits'),mode:'measured',oldValue:'$980',note:'Verification discrepancy'});
 
   p('CON','@001a',null,'@003c',{ts:T(9,20),note:'Emergency contact'});
 }
