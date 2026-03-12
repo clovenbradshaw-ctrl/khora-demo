@@ -104,12 +104,40 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .ac-hint{font-family:'SF Mono',Consolas,monospace;font-size:10px;color:#c4b5a4;flex-shrink:0;white-space:nowrap}
 .ac-empty{padding:16px 14px;text-align:center;font-size:12px;color:#9ca3af;font-style:italic}
 
-.ctx{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:240px;padding:4px 0;font-size:12px}
+.ctx{position:fixed;background:#fff;border:1px solid var(--bd);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:260px;max-width:480px;padding:4px 0;font-size:12px;max-height:80vh;overflow-y:auto}
 .ctx-label{font-size:10px;color:var(--txf);padding:4px 14px 2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .ctx-def{font-size:11px;color:var(--txm);padding:2px 14px 6px;font-style:italic;border-bottom:1px solid var(--bdl);margin-bottom:2px}
 .ctx-fw{font-size:10px;color:var(--meant);padding:2px 14px 4px}
 .ctx-mapping{font-size:10px;color:var(--txf);padding:2px 14px 4px;border-bottom:1px solid var(--bdl)}
 .ctx-item{padding:6px 14px;cursor:pointer;color:var(--tx2)}.ctx-item:hover{background:var(--bg);color:var(--tx)}
+.ctx-sep{border-top:1px solid var(--bdl);margin:2px 0}
+.ctx-section{font-size:9px;font-weight:700;color:var(--txf);padding:6px 14px 2px;text-transform:uppercase;letter-spacing:.06em}
+.ctx-val{padding:4px 14px;font-size:12px;color:var(--tx);font-weight:500}
+.ctx-input-row{padding:4px 14px 6px;display:flex;gap:4px}
+.ctx-input-row input,.ctx-input-row select{flex:1;padding:4px 8px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:12px;outline:none}
+.ctx-input-row input:focus,.ctx-input-row select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--acl)}
+.ctx-input-row button{padding:4px 10px;font-size:11px;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:3px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.ctx-input-row button:hover{background:#155c3e}
+.ctx-def-table{width:calc(100% - 16px);margin:4px 8px 6px;border-collapse:collapse;font-size:10px}
+.ctx-def-table th{text-align:left;padding:3px 6px;font-weight:600;color:var(--txm);background:#fafaf8;border:1px solid var(--bdl);font-size:9px;text-transform:uppercase}
+.ctx-def-table td{padding:3px 6px;border:1px solid var(--bdl);color:var(--tx2);cursor:pointer;position:relative}
+.ctx-def-table td:hover{background:var(--acl)}
+.ctx-def-table tr.ctx-def-active td{background:#fffde7;font-weight:600}
+.ctx-def-edit{padding:3px 6px;border:1px solid var(--accent);font-family:inherit;font-size:10px;border-radius:2px;outline:none;width:100%;box-sizing:border-box}
+.ctx-def-edit:focus{box-shadow:0 0 0 1px var(--acl)}
+.ctx-policy{padding:4px 14px 6px;display:flex;align-items:center;gap:6px}
+.ctx-policy label{font-size:10px;color:var(--txm);font-weight:600;white-space:nowrap}
+.ctx-policy select{flex:1;padding:3px 6px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:11px;outline:none;background:#fff}
+.ctx-policy select:focus{border-color:var(--accent)}
+.ctx-resolve{padding:6px 14px;border-bottom:1px solid var(--bdl)}
+.ctx-resolve-title{font-size:10px;font-weight:600;color:var(--danger);margin-bottom:4px}
+.ctx-resolve-opt{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px;gap:8px}
+.ctx-resolve-val{flex:1;min-width:0}
+.ctx-resolve-src{font-size:9px;color:var(--txm)}
+.ctx-resolve-btn{padding:3px 10px;font-size:10px;border:1px solid var(--accent);background:var(--acl);color:var(--accent);border-radius:3px;cursor:pointer;font-family:inherit;font-weight:600;white-space:nowrap}
+.ctx-resolve-btn:hover{background:var(--accent);color:#fff}
+.c-sup-resolve{font-size:9px;font-weight:600;color:var(--accent);margin-left:4px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted}
+.c-sup-resolve:hover{color:#155c3e}
 
 /* PROFILE */
 .pw{flex:1;overflow-y:auto;padding:0;display:none}.pw.on{display:block}
@@ -206,6 +234,17 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .mfoot{display:flex;gap:6px;margin-top:16px;justify-content:flex-end}
 .map-row{display:flex;gap:6px;align-items:center;font-size:12px;padding:3px 0}.map-row span{color:var(--txm);min-width:160px;font-size:11px}
 .map-row select{width:auto;flex:1}
+.horizon-bar{padding:5px 20px;border-bottom:1px solid var(--bdl);display:flex;align-items:center;gap:14px;background:#fafaf8;flex-shrink:0;font-size:10px;color:var(--txm)}
+.hz-label{font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--txf);font-size:9px}
+.hz-param{display:inline-flex;align-items:center;gap:4px}
+.hz-val{font-weight:600;color:var(--tx2)}
+.hz-dim{color:var(--txf);font-style:italic}
+.hz-select{font-family:inherit;font-size:10px;padding:1px 4px;border:1px solid var(--bdl);border-radius:3px;background:#fff;color:var(--tx2);cursor:pointer}
+.c-prov{font-size:8px;color:var(--txf);display:block;line-height:1;margin-top:2px;font-style:italic}
+.c-other-perspective{opacity:0.45}
+.hz-profile-notice{padding:6px 10px;background:#fafaf8;border:1px solid var(--bdl);border-radius:var(--r);font-size:10px;color:var(--txm);margin-bottom:12px;font-style:italic}
+.hz-profile-notice b{color:var(--tx);font-style:normal}
+.dtab-origin{font-size:8px;color:var(--txf);margin-left:4px;font-style:italic}
 </style>
 </head>
 <body>
@@ -220,6 +259,7 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
   <div class="nav"><div class="nav-title">Khora</div><div class="tabs"><button class="tab on" id="tDB" onclick="showV('db')">Database</button><button class="tab" id="tPR" onclick="showV('profile')">Profile</button></div></div>
   <div id="recBan"></div>
   <div class="scrubber" id="scrub"></div>
+  <div class="horizon-bar" id="horizonBar"></div>
   <div id="toolbar" class="db-toolbar"></div>
   <div id="dtabs" class="dtabs" style="display:none"></div>
   <div class="tw" id="dbV"></div>
@@ -316,7 +356,7 @@ function pushEv(op,target,field,value,x={}) {
   evtN++;
   const ev = {id:evtN, ts:x.ts||new Date().toISOString(), op, target:target||null, field:field||null,
     value:value!==undefined?value:null, oldValue:x.oldValue??null,
-    agent:x.agent||'Marta Torres', mode:x.mode||'declared', note:x.note||null,
+    agent:x.agent||'Lorem', mode:x.mode||'declared', note:x.note||null,
     meta:x.meta||null, parentId:x.parentId||null, table:x.table||'records'};
   events.push(ev);
   if (!x.ts && !x.silent) showToast(ev);
@@ -400,7 +440,7 @@ function seed() {
   liveSet('@001a','housing','Sleeping in vehicle');
   p('ALT','@001a','housing_class','Literally homeless',{ts:T(10,22),agent:'System',mode:'inferred',oldValue:'Unstably housed',note:'Derived from housing observation change'});
 
-  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Marta Torres',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
+  p('ALT','@001a','housing','Couch-surfing, no lease',{ts:T(11,18),agent:'Lorem',mode:'declared',oldValue:'Sleeping in vehicle',note:'Client reports staying with cousin'});
   liveSet('@001a','housing','Couch-surfing, no lease');
   p('ALT','@001a','housing_class','Unstably housed',{ts:T(11,18),agent:'System',mode:'inferred',oldValue:'Literally homeless'});
 
@@ -467,10 +507,30 @@ function replayTo(idx) {
 // ═════════════════════════════════════════════════════════════════════════════
 // STATE
 // ═════════════════════════════════════════════════════════════════════════════
-let view='db', scrubPos=events.length, selectedProfile=null, selectedRows=new Set(), activeFilter='all', editCell=null, expFields={}, recBanner=null;
+let view='db', scrubPos=events.length, selectedProfile=null, selectedRows=new Set(), activeFilter='all', editCell=null, expFields={}, recBanner=null, perspectiveUser=null;
 let derivedViews=[]; let activeTab='records'; let cmdResult=null;
+
+// Per-field conflict resolution policy: 'hold' (default) | 'newest' | 'oldest' | 'ask'
+let fieldPolicies = {}; // fieldKey -> policy string
 const isNow=()=>scrubPos>=events.length;
-const getS=()=>replayTo(isNow()?events.length:scrubPos);
+function applyPerspective(S){
+  if(!perspectiveUser) return S;
+  const records=S.records.map(r=>{
+    const rec={...r,_notByUser:{}};
+    const recStacks=S.stacks[r.uid];
+    if(!recStacks) {fields.filter(f=>f.layer==='given').forEach(f=>{rec._notByUser[f.key]=true;});return rec;}
+    fields.filter(f=>f.layer==='given').forEach(f=>{
+      const claims=recStacks[f.key];
+      if(!claims||!claims.length){rec._notByUser[f.key]=true;return;}
+      const userClaims=claims.filter(c=>c.agent===perspectiveUser);
+      if(userClaims.length){rec[f.key]=userClaims[userClaims.length-1].value;}
+      else{rec._notByUser[f.key]=true;}
+    });
+    return rec;
+  });
+  return {...S,records,_perspective:perspectiveUser};
+}
+const getS=()=>applyPerspective(replayTo(isNow()?events.length:scrubPos));
 
 // ═════════════════════════════════════════════════════════════════════════════
 // LOG RENDERING
@@ -523,7 +583,7 @@ function renderProfileLog(){
 }
 
 function render(){
-  renderScrubber();renderRecBan();renderLog();renderDTabs();
+  renderScrubber();renderHorizon();renderRecBan();renderLog();renderDTabs();
   if(view==='db')renderDB();else renderProfile();
   const re=document.getElementById('cmdRes');
   if(!cmdResult){re.style.display='none';}else{re.style.display='flex';re.className='cmd-result'+(cmdResult.error?' cmd-error':'');re.innerHTML=cmdResult.text+`<button class="b b-sm" style="margin-left:auto" onclick="cmdResult=null;render()">×</button>`;}
@@ -537,13 +597,29 @@ function renderScrubber(){
     <button class="b b-sm${now?' b-primary':''}" onclick="scrubPos=events.length;render()">Now</button>
     ${!now?`<button class="b b-sm" onclick="scrubPos=Math.max(1,scrubPos-1);render()">←</button><button class="b b-sm" onclick="scrubPos=Math.min(events.length,scrubPos+1);render()">→</button><span class="scrub-info">Event ${scrubPos}/${events.length}</span>`:''}`;
 }
+function renderHorizon(){
+  const el=document.getElementById('horizonBar');const now=isNow();
+  const timeLabel=now?'present':fmtDate(events[scrubPos-1]?.ts);
+  const relevantEvents=now?events:events.slice(0,scrubPos);
+  const agents=[...new Set(relevantEvents.map(e=>e.agent))].sort();
+  const S=replayTo(isNow()?events.length:scrubPos);
+  const fwLabels=[...new Set(Object.values(S.frameworks).map(fw=>fw.name))];
+  const agentSelect=`<select class="hz-select" onchange="perspectiveUser=this.value==='all'?null:this.value;render()">
+    <option value="all"${!perspectiveUser?' selected':''}>composite (all users)</option>
+    ${agents.map(a=>`<option value="${esc(a)}"${perspectiveUser===a?' selected':''}>${esc(a)}</option>`).join('')}
+  </select>`;
+  el.innerHTML=`<span class="hz-label">Projection</span>
+    <span class="hz-param"><span class="hz-dim">time:</span> <span class="hz-val">${esc(timeLabel)}</span></span>
+    <span class="hz-param"><span class="hz-dim">user:</span> ${agentSelect}</span>
+    <span class="hz-param"><span class="hz-dim">framework:</span> <span class="hz-val">${esc(fwLabels.join(' + ')||'none')}</span></span>`;
+}
 function renderRecBan(){const el=document.getElementById('recBan');if(!recBanner||!isNow()){el.innerHTML='';return;}el.innerHTML=`<div class="rec-banner"><button class="b b-sm" style="float:right" onclick="recBanner=null;render()">Dismiss</button>${recBanner}</div>`;}
 function renderDTabs(){
   const el=document.getElementById('dtabs');
   if(!derivedViews.length){el.style.display='none';return;}
   el.style.display='flex';
   el.innerHTML=`<div class="dtab${activeTab==='records'?' on':''}" onclick="activeTab='records';render()">All Records</div>`+
-    derivedViews.map(v=>`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()">${esc(v.name)}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`).join('');
+    derivedViews.map(v=>{const ot=v.origin?`Projected at ${v.origin.time}, user: ${v.origin.user}, fw: ${v.origin.frameworks.join('+')}`:'';return`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()" title="${esc(ot)}">${esc(v.name)}${v.origin?'<span class="dtab-origin">projected</span>':''}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`;}).join('');
   Object.keys(customTables).forEach(k=>{
     el.innerHTML+=`<div class="dtab${activeTab===k?' on':''}" onclick="activeTab='${k}';render()">${esc(customTables[k].label)}</div>`;
   });
@@ -587,7 +663,7 @@ function renderDB(){
       ${displayFields.map(f=>{
         const isMeant=f.layer==='meant';
         const tag=isMeant?'<span class="tag tag-m">meant</span>':'<span class="tag tag-g">given</span>';
-        return`<th oncontextmenu="showCtx(event,'${f.key}')">${esc(f.label)}${tag}</th>`;
+        return`<th data-fk="${f.key}" oncontextmenu="showCtx(event,'${f.key}')">${esc(f.label)}${tag}</th>`;
       }).join('')}
       ${!past&&activeTab==='records'?'<th style="width:28px"></th>':''}
     </tr></thead>
@@ -603,7 +679,7 @@ function renderDB(){
           // Meant fields: read-only, derived
           if(isMeant){
             const fwKey=f.framework;const fw=S.frameworks[fwKey];
-            return`<td class="meant-cell" oncontextmenu="showCtx(event,'${f.key}')">${val?esc(val):'<span class="c-null">—</span>'}${fw?` <span style="font-size:9px;color:var(--mbd)">${fw.name}</span>`:''}</td>`;
+            return`<td class="meant-cell" oncontextmenu="showCtx(event,'${f.key}')" title="Derived field — right-click column header for details">${val?esc(val):'<span class="c-null">—</span>'}${fw?` <span style="font-size:9px;color:var(--mbd)">${fw.name}</span>`:''}</td>`;
           }
 
           // Editing
@@ -611,11 +687,15 @@ function renderDB(){
             if(f.type==='select')return`<td><select class=c-edit onchange="commitEd('${r.uid}','${f.key}',this.value)" onblur="setTimeout(()=>{if(editCell){editCell=null;render();}},0)">${f.opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select></td>`;
             return`<td><input class=c-edit value="${esc(val||'')}" id=edI onkeydown="if(event.key==='Enter')commitEd('${r.uid}','${f.key}',this.value);if(event.key==='Escape'){editCell=null;render()}" onblur="setTimeout(()=>commitEd('${r.uid}','${f.key}',this.value),0)"></td>`;
           }
+          const stk=S.stacks[r.uid]?.[f.key];const latest=stk?.length?stk[stk.length-1]:null;
+          const provAgent=latest?.agent||'';const provMode=latest?.mode||'';
+          const isOther=perspectiveUser&&r._notByUser?.[f.key];
+          const provSpan=provAgent?`<span class="c-prov">${esc(provAgent)} · ${provMode}</span>`:'';
           if(val==null){
             const at=absTypes[sk];const lbl=at==='cleared'?'recorded absent':'not yet collected';const cls=at==='cleared'?'c-nt-clr':'c-nt-nc';
-            return`<td class="c-null"${!past?` ondblclick="startEd('${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span></td>`;
+            return`<td class="c-null${isOther?' c-other-perspective':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span>${provSpan}</td>`;
           }
-          return`<td class="${isSup?'c-sup':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')"`:''}>${esc(val)}${isSup?'<span class=c-sup-tag>conflict</span>':''}${!past?`<span class=ha><button class=mb onclick="startEd('${r.uid}','${f.key}')">✎</button></span>`:''}</td>`;
+          return`<td class="${isSup?'c-sup':''}${isOther?' c-other-perspective':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}>${esc(val)}${provSpan}${isSup?'<span class=c-sup-tag>conflict</span><span class=c-sup-resolve onclick="event.stopPropagation();showCellCtx(event,\''+r.uid+'\',\''+f.key+'\')">resolve</span>':''}${!past?`<span class=ha><button class=mb onclick="startEd('${r.uid}','${f.key}')">✎</button></span>`:''}</td>`;
         }).join('')}
         ${!past&&activeTab==='records'?`<td><button class=mb onclick="pushEv('NUL','${r.uid}');delete liveData['${r.uid}'];scrubPos=events.length;render()">×</button></td>`:''}
       </tr>`;
@@ -663,31 +743,221 @@ function commitEd(uid,field,newVal){
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// CONTEXT MENU → REC
+// CONTEXT MENUS — Column headers, cell right-click, definitions table
 // ═════════════════════════════════════════════════════════════════════════════
+function closeCtx(){const m=document.getElementById('ctxM');if(m)m.remove();}
+function posCtx(d,e){
+  d.style.left=Math.min(e.clientX,innerWidth-300)+'px';
+  d.style.top=Math.min(e.clientY,innerHeight-300)+'px';
+  document.body.appendChild(d);
+  setTimeout(()=>document.addEventListener('click',function h(e2){if(!d.contains(e2.target)){d.remove();document.removeEventListener('click',h);}},10));
+}
+
+// Build definitions table HTML — all fields shown as a table, current field highlighted, defs are editable
+function buildDefTable(activeKey){
+  let rows=fields.map(f=>{
+    const isActive=f.key===activeKey;
+    const layerColor=f.layer==='meant'?'var(--meant)':'#78716c';
+    return`<tr class="${isActive?'ctx-def-active':''}" data-fk="${f.key}">
+      <td onclick="scrollToCol('${f.key}');closeCtx()" title="Click to scroll to column">${esc(f.label)}</td>
+      <td><span style="color:${layerColor}">${f.layer}</span></td>
+      <td class="ctx-def-cell" data-fk="${f.key}" ondblclick="startDefEdit(this,'${f.key}')">${esc(f.def)}</td>
+    </tr>`;
+  }).join('');
+  return`<table class="ctx-def-table"><thead><tr><th>Column</th><th>Type</th><th>Definition <span style="font-weight:400;text-transform:none">(dbl-click to edit)</span></th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// Scroll to a column in the database table
+window.scrollToCol=(fk)=>{
+  if(view!=='db')return;
+  const ths=document.querySelectorAll('#dbV th');
+  for(const th of ths){if(th.getAttribute('data-fk')===fk){th.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});th.style.background='#fffde7';setTimeout(()=>th.style.background='',1500);break;}}
+};
+
+// Inline definition edit in the context menu — tracked via events
+window.startDefEdit=(td,fk)=>{
+  if(!isNow())return;
+  const f=fields.find(x=>x.key===fk);if(!f)return;
+  const old=f.def;
+  td.innerHTML=`<input class="ctx-def-edit" value="${esc(old)}" onkeydown="if(event.key==='Enter')commitDefEdit('${fk}',this.value);if(event.key==='Escape')closeCtx()" onblur="commitDefEdit('${fk}',this.value)">`;
+  const inp=td.querySelector('input');if(inp){inp.focus();inp.select();}
+};
+window.commitDefEdit=(fk,newDef)=>{
+  const f=fields.find(x=>x.key===fk);if(!f)return;
+  newDef=newDef.trim();
+  if(newDef===f.def||!newDef)return;
+  const oldDef=f.def;
+  f.def=newDef;
+  pushEv('ALT',null,fk,newDef,{oldValue:oldDef,note:`Definition changed: "${oldDef}" → "${newDef}"`});
+  scrubPos=events.length;
+  closeCtx();render();
+};
+
+// ── Column header context menu ──
 window.showCtx=(e,fk)=>{
-  e.preventDefault();const f=fields.find(x=>x.key===fk);if(!f)return;
+  e.preventDefault();closeCtx();
+  const f=fields.find(x=>x.key===fk);if(!f)return;
   const d=document.createElement('div');d.className='ctx';d.id='ctxM';
-  d.style.left=Math.min(e.clientX,innerWidth-260)+'px';d.style.top=Math.min(e.clientY,innerHeight-200)+'px';
 
   let extra='';
+  // Framework info for meant fields
   if(f.layer==='meant'&&f.framework){
     const fw=frameworks[f.framework];
     if(fw){
       extra+=`<div class="ctx-fw">Framework: <b>${fw.name}</b></div>`;
       extra+=`<div class="ctx-mapping">Mapping:<br>${Object.entries(fw.mapping).map(([k,v])=>`${k} → <b>${v}</b>`).join('<br>')}</div>`;
-      if(isNow())extra+=`<div class="ctx-item" onclick="openREC('${f.framework}');document.getElementById('ctxM')?.remove()">↬ Change framework (REC)</div>`;
+      if(isNow())extra+=`<div class="ctx-item" onclick="openREC('${f.framework}');closeCtx()">↬ Change framework (REC)</div>`;
     }
   }
+  // Values list for given select fields
   if(f.layer==='given'&&f.opts){
     extra+=`<div class="ctx-mapping">Values: ${f.opts.join(', ')}</div>`;
   }
 
+  // Conflict resolution policy (for given fields only)
+  let policyH='';
+  if(f.layer==='given'){
+    const cur=fieldPolicies[fk]||'hold';
+    policyH=`<div class="ctx-sep"></div>
+      <div class="ctx-section">Conflict Resolution</div>
+      <div class="ctx-policy">
+        <label>When values conflict:</label>
+        <select onchange="fieldPolicies['${fk}']=this.value;pushEv('ALT',null,'${fk}',this.value,{oldValue:'${cur}',note:'Conflict policy: '+this.value});scrubPos=events.length;">
+          <option value="hold"${cur==='hold'?' selected':''}>Hold for review</option>
+          <option value="newest"${cur==='newest'?' selected':''}>Accept newest</option>
+          <option value="oldest"${cur==='oldest'?' selected':''}>Keep oldest</option>
+          <option value="ask"${cur==='ask'?' selected':''}>Ask each time</option>
+        </select>
+      </div>`;
+  }
+
+  // Definitions table
+  const defTable=buildDefTable(fk);
+
   d.innerHTML=`<div class="ctx-label">${esc(f.label)} <span style="font-size:8px;color:${f.layer==='meant'?'var(--meant)':'#78716c'}">${f.layer}</span></div>
-    <div class="ctx-def">${esc(f.def)}</div>${extra}
-    <div class="ctx-item" onclick="document.getElementById('ctxM')?.remove()">Close</div>`;
-  document.body.appendChild(d);
-  setTimeout(()=>document.addEventListener('click',function h(e2){if(!d.contains(e2.target)){d.remove();document.removeEventListener('click',h);}},10));
+    <div class="ctx-def">${esc(f.def)}</div>${extra}${policyH}
+    <div class="ctx-sep"></div>
+    <div class="ctx-section">All Definitions</div>
+    ${defTable}
+    <div class="ctx-item" onclick="closeCtx()">Close</div>`;
+  posCtx(d,e);
+};
+
+// ── Cell context menu — enter alternative value (SUP) ──
+window.showCellCtx=(e,uid,fk)=>{
+  e.preventDefault();e.stopPropagation();closeCtx();
+  const f=fields.find(x=>x.key===fk);if(!f||f.layer==='meant')return;
+  if(!isNow())return;
+  const S=getS();const r=S.records.find(x=>x.uid===uid);if(!r)return;
+  const val=r[fk];
+  const sk=uid+'.'+fk;const isSup=!!S.sups[sk];
+
+  const d=document.createElement('div');d.className='ctx';d.id='ctxM';
+
+  // Current value
+  let valDisplay=val!=null?esc(val):'<span style="color:var(--txf);font-style:italic">empty</span>';
+  let supInfo='';
+  if(isSup){
+    const s=S.sups[sk];
+    supInfo=`<div class="ctx-resolve">
+      <div class="ctx-resolve-title">Conflicting sources — choose one to resolve</div>
+      <div class="ctx-resolve-opt">
+        <div class="ctx-resolve-val">${esc(s.a.value)} <span class="ctx-resolve-src">${esc(s.a.agent)}</span></div>
+        <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept</button>
+      </div>
+      <div class="ctx-resolve-opt">
+        <div class="ctx-resolve-val">${esc(s.b.value)} <span class="ctx-resolve-src">${esc(s.b.agent)} · ${s.b.mode||'declared'}</span></div>
+        <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept</button>
+      </div>
+    </div>`;
+  }
+
+  // Alternative value input
+  let altInput;
+  if(f.type==='select'&&f.opts){
+    altInput=`<select id="ctxAltVal" style="flex:1;padding:4px 8px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:12px">
+      ${f.opts.filter(o=>o!==val).map(o=>`<option>${o}</option>`).join('')}
+    </select>`;
+  } else {
+    altInput=`<input id="ctxAltVal" placeholder="Alternative value…" style="flex:1;padding:4px 8px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:12px;outline:none"
+      onkeydown="if(event.key==='Enter'){submitCellAlt('${uid}','${fk}');}"
+    >`;
+  }
+
+  // Source agent input
+  const agentInput=`<input id="ctxAltAgent" placeholder="Source (e.g. Benefits System)" value="" style="flex:1;padding:4px 8px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:11px;outline:none;color:var(--txm)">`;
+
+  d.innerHTML=`<div class="ctx-label">${esc(f.label)} <span style="font-size:8px;color:#78716c">given</span></div>
+    <div class="ctx-val">Current: ${valDisplay}</div>
+    ${supInfo}
+    <div class="ctx-sep"></div>
+    <div class="ctx-section">Enter Alternative Value</div>
+    <div class="ctx-input-row">${altInput}</div>
+    <div style="padding:0 14px 2px;font-size:9px;color:var(--txf)">Source agent:</div>
+    <div class="ctx-input-row">${agentInput}<button onclick="submitCellAlt('${uid}','${fk}')">Submit</button></div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="startEd('${uid}','${fk}');closeCtx()">✎ Edit value directly</div>
+    ${val!=null?`<div class="ctx-item" onclick="pushEv('NUL','${uid}','${fk}');absTypes['${uid}.${fk}']='cleared';if(liveData['${uid}'])liveData['${uid}']['${fk}']=null;scrubPos=events.length;closeCtx();render()">∅ Clear value</div>`:''}
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="closeCtx()">Close</div>`;
+  posCtx(d,e);
+  setTimeout(()=>{const inp=document.getElementById('ctxAltVal');if(inp)inp.focus();},50);
+};
+
+// Submit alternative value from cell context menu → creates SUP event
+window.submitCellAlt=(uid,fk)=>{
+  const valEl=document.getElementById('ctxAltVal');
+  const agentEl=document.getElementById('ctxAltAgent');
+  if(!valEl)return;
+  const newVal=valEl.value.trim();if(!newVal)return;
+  const agent=agentEl?.value.trim()||'Alternative source';
+  const old=liveData[uid]?.[fk];
+
+  // Check conflict policy
+  const policy=fieldPolicies[fk]||'hold';
+
+  if(policy==='newest'){
+    // Auto-accept the new value
+    pushEv('ALT',uid,fk,newVal,{oldValue:old,agent,mode:'declared',note:`Auto-accepted (policy: newest)`});
+    liveSet(uid,fk,newVal);
+    // Derive meant if needed
+    for(const[fwKey,fw]of Object.entries(frameworks)){
+      if(fw.givenField===fk){const om=fw.mapping[old]||null;const nm=fw.mapping[newVal]||null;if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred'});}
+    }
+  } else if(policy==='oldest'){
+    // Keep existing, just log the competing claim
+    pushEv('SUP',uid,fk,newVal,{agent,mode:'measured',oldValue:old,note:`Rejected (policy: keep oldest) — held as record`});
+  } else {
+    // 'hold' or 'ask' — create a SUP event (conflict)
+    pushEv('SUP',uid,fk,newVal,{agent,mode:'measured',oldValue:old});
+  }
+
+  scrubPos=events.length;closeCtx();render();
+};
+
+// Resolve a conflict by accepting one of the competing values
+window.resolveConflict=(uid,fk,acceptedValue,rejectedValue,sourceAgent)=>{
+  const old=liveData[uid]?.[fk];
+  // SIG: user signals their selection from the competing values
+  const sigEv=pushEv('SIG',uid,fk,acceptedValue,{
+    note:`Selected "${acceptedValue}" (${sourceAgent||'prior'}) over "${rejectedValue}"`
+  });
+  // ALT: the selection triggers the value change, dissolving the SUP
+  pushEv('ALT',uid,fk,acceptedValue,{
+    oldValue:old,
+    parentId:sigEv.id,
+    note:`Conflict resolved: ${old} → ${acceptedValue}`
+  });
+  liveSet(uid,fk,acceptedValue);
+  // Auto-derive meant fields
+  for(const[fwKey,fw]of Object.entries(frameworks)){
+    if(fw.givenField===fk){
+      const om=fw.mapping[old]||null;
+      const nm=fw.mapping[acceptedValue]||null;
+      if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:'System',mode:'inferred',parentId:sigEv.id});
+    }
+  }
+  scrubPos=events.length;closeCtx();render();
 };
 
 window.openREC=(fwKey)=>{
@@ -827,7 +1097,7 @@ function parseCMD(raw){
       const pf=parseFilter(filter);
       const filtered=S.records.filter(r=>{const v=r[pf.field];if(v==null)return false;if(pf.op==='=')return String(v)===pf.value;if(pf.op==='>')return parseFloat(String(v).replace(/[^0-9.]/g,''))>parseFloat(pf.value);return false;});
       pushEv('SEG',null,null,filter,{meta:{filterExpr:filter}});
-      derivedViews.push({id:'seg_'+Date.now(),name:filter,records:filtered});activeTab=derivedViews[derivedViews.length-1].id;
+      derivedViews.push({id:'seg_'+Date.now(),name:filter,records:filtered,origin:{time:isNow()?'present':fmtDate(events[scrubPos-1]?.ts),user:perspectiveUser||'all users',frameworks:[...new Set(Object.values(S.frameworks).map(fw=>fw.name))]}});activeTab=derivedViews[derivedViews.length-1].id;
       return`${filtered.length} records → "${filter}"`;
     }
     case'SYN':{
@@ -998,9 +1268,9 @@ function renderProfile(){
 
     let layers=`<div class="fb-row"><span class="fb-tag fb-tag-g">given</span>${givenH}${meta}${acts}</div>`;
 
-    if(isSup){const s=S.sups[sk];layers+=`<div class="sup-blk"><div class="sup-t">Conflicting sources</div>
-      <div class="sup-opt"><div>${esc(s.a.value)} <span class="sup-src">${s.a.agent}</span></div>${!past?`<button class="b b-sm" onclick="pushEv('ALT','${r.uid}','${gf.key}','${esc(s.a.value)}');liveSet('${r.uid}','${gf.key}','${esc(s.a.value)}');scrubPos=events.length;render()">Accept</button>`:''}</div>
-      <div class="sup-opt"><div>${esc(s.b.value)} <span class="sup-src">${s.b.agent}</span></div>${!past?`<button class="b b-sm" onclick="pushEv('ALT','${r.uid}','${gf.key}','${esc(s.b.value)}');liveSet('${r.uid}','${gf.key}','${esc(s.b.value)}');scrubPos=events.length;render()">Accept</button>`:''}</div></div>`;}
+    if(isSup){const s=S.sups[sk];layers+=`<div class="sup-blk"><div class="sup-t">Conflicting sources — resolve by accepting one</div>
+      <div class="sup-opt"><div>${esc(s.a.value)} <span class="sup-src">${s.a.agent}</span></div>${!past?`<button class="b b-sm" onclick="resolveConflict('${r.uid}','${gf.key}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept</button>`:''}</div>
+      <div class="sup-opt"><div>${esc(s.b.value)} <span class="sup-src">${s.b.agent} · ${s.b.mode||'declared'}</span></div>${!past?`<button class="b b-sm" onclick="resolveConflict('${r.uid}','${gf.key}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept</button>`:''}</div></div>`;}
 
     if(prior.length){
       layers+=`<div style="padding-left:54px"><button class="ht" onclick="expFields['${sk}']=!expFields['${sk}'];render()">${exp?'Hide':'Show'} ${prior.length} prior</button></div>`;
@@ -1015,8 +1285,12 @@ function renderProfile(){
     }
 
     const label=meantField?`${gf.label} → ${meantField.label}`:gf.label;
-    fH+=`<div class="fb${isSup?' contested':''}"><div class="fb-head">${esc(label)}</div>${layers}</div>`;
+    fH+=`<div class="fb${isSup?' contested':''}" oncontextmenu="showCellCtx(event,'${r.uid}','${gf.key}')"><div class="fb-head">${esc(label)}</div>${layers}</div>`;
   });
+
+  const perspNotice=perspectiveUser
+    ?`<div class="hz-profile-notice">Projected through <b>${esc(perspectiveUser)}</b>. Fields not observed by this user show composite values at reduced opacity.</div>`
+    :`<div class="hz-profile-notice">Composite projection — all users' observations.</div>`;
 
   // ── Event count for this person ──
   const evtCount=events.filter(e=>e.target===r.uid).length;
@@ -1039,6 +1313,7 @@ function renderProfile(){
       </div>
     </div>
     <div class="pw-inner">
+      ${perspNotice}
       ${attn}
       <div class="p-cards">${cardsH}</div>
       ${connH}
