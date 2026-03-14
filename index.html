@@ -247,6 +247,65 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 .hz-profile-notice{padding:6px 10px;background:#fafaf8;border:1px solid var(--bdl);border-radius:var(--r);font-size:10px;color:var(--txm);margin-bottom:12px;font-style:italic}
 .hz-profile-notice b{color:var(--tx);font-style:normal}
 .dtab-origin{font-size:8px;color:var(--txf);margin-left:4px;font-style:italic}
+
+/* Resources */
+.res-cap{display:flex;align-items:center;gap:6px;font-size:12px}
+.res-bar{width:80px;height:8px;background:var(--bdl);border-radius:4px;overflow:hidden;flex-shrink:0}
+.res-bar-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .2s}
+.res-cat{font-size:9px;font-weight:600;padding:1px 6px;border-radius:8px;background:#f0f9ff;color:#0284c7;border:1px solid #bae6fd}
+
+/* Teams */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:20px}
+.team-card{border:1px solid var(--bdl);border-radius:8px;padding:16px;background:#fff;cursor:pointer;transition:all .12s}
+.team-card:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.team-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.team-swatch{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.team-name{font-size:14px;font-weight:600}
+.team-desc{font-size:11px;color:var(--tx2);margin-bottom:8px;line-height:1.4}
+.team-meta{display:flex;gap:8px;flex-wrap:wrap}
+.consent-badge{font-size:9px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--acl);color:var(--accent);border:1px solid #b7e4c7}
+.opacity-badge{font-size:9px;font-weight:600;padding:1px 6px;border-radius:8px;background:#f5f3ef;color:#78716c;border:1px solid #e0ddd6}
+.team-members{margin-top:8px;font-size:11px;color:var(--txm)}
+.team-member-row{display:flex;align-items:center;gap:6px;padding:3px 0}
+.team-member-role{font-size:9px;font-weight:600;padding:0 4px;border-radius:3px;background:#fefce8;color:#ca8a04;border:1px solid #fde68a}
+
+/* Team detail */
+.team-detail{max-width:700px;margin:0 auto;padding:20px}
+.team-detail-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.team-detail-swatch{width:24px;height:24px;border-radius:50%;flex-shrink:0}
+.team-detail-name{font-size:20px;font-weight:700}
+.team-section{margin-top:16px;border:1px solid var(--bdl);border-radius:var(--r);background:#fff;overflow:hidden}
+.team-section-head{padding:8px 12px;background:#fafaf8;border-bottom:1px solid var(--bdl);font-size:11px;font-weight:600;color:var(--tx2);display:flex;justify-content:space-between;align-items:center}
+
+/* Epistemic badges */
+.ep-badge{font-size:8px;font-weight:700;padding:1px 4px;border-radius:2px;vertical-align:middle;margin-left:3px}
+.ep-measured{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.ep-observed{background:#dbeafe;color:#1e40af;border:1px solid #bfdbfe}
+.ep-declared{background:#f3f4f6;color:#4b5563;border:1px solid #e5e7eb}
+.ep-inferred{background:#f3e8ff;color:#7c3aed;border:1px solid #ddd6fe}
+.ep-aggregated{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+
+/* Claim phases */
+.phase-badge{font-size:8px;font-weight:600;padding:1px 5px;border-radius:8px;margin-left:3px}
+.phase-settled{background:#dcfce7;color:#166534}.phase-contested{background:var(--dbg);color:var(--danger)}
+.phase-superseded{background:#f3f4f6;color:#6b7280}.phase-held{background:#fef3c7;color:#92400e}
+
+/* Governance */
+.gov-panel{max-width:600px;margin:20px auto;padding:0 20px}
+.gov-proposal{border:1px solid var(--bdl);border-radius:var(--r);padding:14px;background:#fff;margin-bottom:10px}
+.gov-proposal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.gov-proposal-title{font-size:13px;font-weight:600}
+.gov-status{font-size:9px;font-weight:600;padding:1px 6px;border-radius:8px}
+.gov-status-pending{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.gov-status-resolved{background:#dcfce7;color:#166534;border:1px solid #bbf7d0}
+.gov-positions{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.gov-pos-btn{font-size:10px;padding:3px 10px;border:1px solid var(--bd);background:#fff;border-radius:var(--r);cursor:pointer;font-family:inherit}
+.gov-pos-btn:hover{background:var(--bg);border-color:var(--txm)}
+.gov-pos-btn.active{background:var(--acl);border-color:var(--accent);color:var(--accent);font-weight:600}
+
+/* Schema ops in context menu */
+.ctx-schema-ops{border-top:1px solid var(--bdl);margin-top:2px;padding-top:2px}
+.ctx-schema-ops .ctx-item{color:var(--tx2)}
 </style>
 </head>
 <body>
@@ -263,7 +322,7 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
   <div class="scrubber" id="scrub"></div>
   <div class="horizon-bar" id="horizonBar"></div>
   <div id="toolbar" class="db-toolbar"></div>
-  <div id="dtabs" class="dtabs" style="display:none"></div>
+  <div id="dtabs" class="dtabs"></div>
   <div class="tw" id="dbV"></div>
   <div class="pw" id="profV"></div>
   <div id="cmdRes" style="display:none"></div>
@@ -346,8 +405,49 @@ function deriveMeant(frameworkKey, givenValue) {
   return fw.mapping[givenValue] || null;
 }
 
+// Resource schema
+let resourceFields = [
+  {key:'name', label:'Resource Name', type:'text', layer:'given', def:'Name of the resource'},
+  {key:'category', label:'Category', type:'select', layer:'given', def:'Resource category',
+   opts:['Housing','Financial','Transportation','Food','Health','Employment','Legal','Education/General']},
+  {key:'res_type', label:'Type', type:'select', layer:'given', def:'Physical or service resource',
+   opts:['Physical','Service','Hybrid']},
+  {key:'capacity', label:'Capacity', type:'text', layer:'given', def:'Total units available'},
+  {key:'available', label:'Available', type:'text', layer:'given', def:'Currently available units'},
+  {key:'funding', label:'Funding Source', type:'text', layer:'given', def:'Funding source or grant'},
+  {key:'res_status', label:'Status', type:'select', layer:'given', def:'Current allocation state',
+   opts:['Available','Partially Allocated','Fully Allocated','Expired','Suspended']},
+];
+
+// Team schema
+let teamFields = [
+  {key:'name', label:'Team Name', type:'text', layer:'given', def:'Display name of the team'},
+  {key:'description', label:'Description', type:'text', layer:'given', def:'Team purpose'},
+  {key:'color', label:'Color', type:'select', layer:'given', def:'Visual identifier',
+   opts:['#2563eb','#16a34a','#d97706','#dc2626','#7c3aed','#0d9488']},
+  {key:'consent_mode', label:'Consent Mode', type:'select', layer:'given', def:'How schema proposals are decided',
+   opts:['lead_decides','majority','unanimous']},
+  {key:'opacity', label:'Opacity', type:'select', layer:'given', def:'Data visibility level',
+   opts:['transparent','translucent','opaque']},
+];
+
 // Custom tables created via EOQL
 let customTables = {}; // key -> {label, fields:[], data:{}}
+
+// First-class table stores
+let liveResources = {};   // resId -> {field: value}
+let liveTeams = {};       // teamId -> {field: value}
+let teamMemberships = {}; // teamId -> [{entityId, role, entityType}]
+let selectedTeam = null;  // for team detail view
+
+// Governance queue for schema proposals
+let governanceQueue = []; // [{id, type, detail, teamId, status, positions:{}, result}]
+
+// Epistemic mode hierarchy (higher = more authoritative)
+const EPISTEMIC_MODES = {measured:5, observed:4, declared:3, inferred:2, aggregated:1};
+
+// Schema change tracking
+let schemaHistory = [];
 
 // ═════════════════════════════════════════════════════════════════════════════
 // EVENTS
@@ -368,6 +468,22 @@ function pushEv(op,target,field,value,x={}) {
 
 function eoN(ev) {
   const t=ev.target||'',f=ev.field?'.'+ev.field:'';
+  // Schema ops
+  if(ev.meta?.schemaOp){
+    const so=ev.meta.schemaOp;
+    if(so==='add_field') return `INS(schema.${ev.field}, "${trn(ev.value)}")`;
+    if(so==='remove_field') return `NUL(schema.${ev.field})`;
+    if(so==='rename') return `ALT(schema.${ev.field}, "${trn(ev.value)}")`;
+    if(so==='change_type') return `REC(schema.${ev.field}.type, "${trn(ev.value)}")`;
+    if(so==='reorder') return `SEG(schema.reorder, "${ev.field} → ${ev.value}")`;
+    if(so==='add_option') return `SIG(schema.${ev.field}.opt, "${trn(ev.value)}")`;
+  }
+  // Governance
+  if(ev.meta?.governance) return `SIG(governance.${t}, "${trn(ev.value)}")`;
+  // Resource allocation
+  if(ev.meta?.allocationType) return `CON(${t} → ${ev.value}, "${ev.meta.allocationType}")`;
+  // Team membership
+  if(ev.meta?.membershipOp) return `CON(${t}, ${ev.value}, "${ev.meta.membershipOp}:${ev.meta.role||''}")`;
   switch(ev.op) {
     case 'INS': return ev.field ? `INS(${t}${f}, "${trn(ev.value)}")` : `INS(${t})`;
     case 'NUL': return ev.field ? `NUL(${t}${f})` : `NUL(${t})`;
@@ -418,6 +534,25 @@ const users = {
 const U_REYES='u-7a3f-reyes', U_CARTER='u-9b1c-carter', U_CRISIS='u-4e2d-crisis', U_BENEFITS='u-8f0a-benefits', U_SYSTEM='u-0000-system';
 function uName(uid) { return users[uid]?.name || uid; }
 
+// Infer which EO operator to use based on epistemic mode hierarchy
+function inferOperator(existingAgent, existingMode, newAgent, newMode) {
+  const existR = EPISTEMIC_MODES[existingMode] || 3;
+  const newR = EPISTEMIC_MODES[newMode] || 3;
+  if (existingAgent === newAgent) return 'ALT'; // same agent always ALT
+  return 'SUP'; // different agent always SUP (contest)
+}
+
+// Determine claim phase from stacks
+function claimPhase(stacks, uid, fieldKey) {
+  const stack = stacks?.[uid]?.[fieldKey];
+  if (!stack?.length) return 'empty';
+  const last = stack[stack.length - 1];
+  if (last.op === 'SUP') return 'contested';
+  if (last.op === 'SYN') return 'settled';
+  if (stack.length > 1 && stack[stack.length-2].op === 'SUP') return 'settled';
+  return stack.length > 1 ? 'superseded' : 'settled';
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 // SEED
 // ═════════════════════════════════════════════════════════════════════════════
@@ -465,6 +600,49 @@ function seed() {
   p('SUP','@001a','income','$1,100',{ts:'2025-01-10T09:00:00Z',agent:U_BENEFITS,mode:'measured',oldValue:'$980',note:'Verification discrepancy'});
 
   p('CON','@001a',null,'@003c',{ts:T(9,20),note:'Emergency contact'});
+
+  // ── Seed resources ──
+  const seedRes = [
+    {id:'#res01',name:'Emergency Shelter Bed',cat:'Housing',type:'Physical',cap:'20',avail:'12',fund:'HUD CoC Grant',st:'Partially Allocated'},
+    {id:'#res02',name:'Bus Pass (Monthly)',cat:'Transportation',type:'Physical',cap:'50',avail:'35',fund:'City Transit Fund',st:'Available'},
+    {id:'#res03',name:'Legal Aid Consultation',cat:'Legal',type:'Service',cap:'10',avail:'7',fund:'Pro Bono Network',st:'Available'},
+  ];
+  seedRes.forEach(r=>{
+    p('INS',r.id,null,r.name,{ts:T(8,12),table:'resources'});
+    liveResources[r.id]={uid:r.id};
+    const vals={name:r.name,category:r.cat,res_type:r.type,capacity:r.cap,available:r.avail,funding:r.fund,res_status:r.st};
+    Object.entries(vals).forEach(([k,v])=>{p('SIG',r.id,k,v,{ts:T(8,12),table:'resources'});liveResources[r.id][k]=v;});
+  });
+  // Allocate shelter bed to Aaliya
+  p('CON','#res01',null,'@001a',{ts:T(9,5),table:'resources',meta:{allocationType:'allocation',units:1},note:'Emergency shelter placement'});
+
+  // ── Seed teams ──
+  p('INS','~team01',null,'Housing Outreach',{ts:T(8,10),table:'teams'});
+  liveTeams['~team01']={uid:'~team01',name:'Housing Outreach',description:'Field team for housing-first approach',color:'#16a34a',consent_mode:'majority',opacity:'transparent'};
+  Object.entries({name:'Housing Outreach',description:'Field team for housing-first approach',color:'#16a34a',consent_mode:'majority',opacity:'transparent'}).forEach(([k,v])=>{
+    p('SIG','~team01',k,v,{ts:T(8,10),table:'teams'});
+  });
+  teamMemberships['~team01']=[
+    {entityId:U_REYES,role:'lead',entityType:'user'},
+    {entityId:U_CARTER,role:'member',entityType:'user'},
+  ];
+  teamMemberships['~team01'].forEach(m=>{
+    p('CON','~team01',null,m.entityId,{ts:T(8,10),table:'teams',meta:{membershipOp:'add',role:m.role,entityType:m.entityType}});
+  });
+
+  p('INS','~team02',null,'Benefits Coordination',{ts:T(8,11),table:'teams'});
+  liveTeams['~team02']={uid:'~team02',name:'Benefits Coordination',description:'Cross-agency benefits and insurance team',color:'#2563eb',consent_mode:'lead_decides',opacity:'translucent'};
+  Object.entries({name:'Benefits Coordination',description:'Cross-agency benefits and insurance team',color:'#2563eb',consent_mode:'lead_decides',opacity:'translucent'}).forEach(([k,v])=>{
+    p('SIG','~team02',k,v,{ts:T(8,11),table:'teams'});
+  });
+  teamMemberships['~team02']=[
+    {entityId:U_BENEFITS,role:'lead',entityType:'user'},
+    {entityId:U_REYES,role:'member',entityType:'user'},
+    {entityId:'~team01',role:'member',entityType:'team'},
+  ];
+  teamMemberships['~team02'].forEach(m=>{
+    p('CON','~team02',null,m.entityId,{ts:T(8,11),table:'teams',meta:{membershipOp:'add',role:m.role,entityType:m.entityType}});
+  });
 }
 seed();
 
@@ -484,8 +662,30 @@ function replayTo(idx) {
     });
   }
 
+  const resources={}, teams={}, allocs=[];
+
   cut.forEach(ev=>{
-    if (ev.table && ev.table!=='records') return; // skip custom table events for main replay
+    // Resources
+    if(ev.table==='resources'){
+      if(ev.op==='INS'&&ev.target&&!ev.field) resources[ev.target]={uid:ev.target,_name:ev.value};
+      if(['SIG','ALT','INS'].includes(ev.op)&&ev.target&&ev.field){if(!resources[ev.target])resources[ev.target]={uid:ev.target};resources[ev.target][ev.field]=ev.value;}
+      if(ev.op==='NUL'&&ev.target&&!ev.field) delete resources[ev.target];
+      if(ev.op==='NUL'&&ev.target&&ev.field&&resources[ev.target]) resources[ev.target][ev.field]=null;
+      if(ev.op==='CON'&&ev.meta?.allocationType) allocs.push({from:ev.target,to:ev.value,units:ev.meta.units,type:ev.meta.allocationType,ts:ev.ts});
+      return;
+    }
+    // Teams
+    if(ev.table==='teams'){
+      if(ev.op==='INS'&&ev.target&&!ev.field) teams[ev.target]={uid:ev.target,_name:ev.value};
+      if(['SIG','ALT','INS'].includes(ev.op)&&ev.target&&ev.field){if(!teams[ev.target])teams[ev.target]={uid:ev.target};teams[ev.target][ev.field]=ev.value;}
+      if(ev.op==='NUL'&&ev.target&&!ev.field) delete teams[ev.target];
+      return;
+    }
+    // Governance / schema events — skip for record replay
+    if(ev.table==='governance') return;
+    if(ev.meta?.schemaOp) return;
+
+    // Records
     if (ev.op==='INS'&&ev.target&&!ev.field) recs[ev.target]={uid:ev.target,_name:ev.value};
     if (['SIG','ALT','INS'].includes(ev.op)&&ev.target&&ev.field) {
       if (!recs[ev.target]) recs[ev.target]={uid:ev.target};
@@ -494,12 +694,11 @@ function replayTo(idx) {
     }
     if (ev.op==='NUL'&&ev.target&&ev.field) { if(recs[ev.target])recs[ev.target][ev.field]=null; delete sups[ev.target+'.'+ev.field]; }
     if (ev.op==='NUL'&&ev.target&&!ev.field) delete recs[ev.target];
-    if (ev.op==='SUP'&&ev.target&&ev.field) sups[ev.target+'.'+ev.field]={a:{value:ev.oldValue,agent:'prior'},b:{value:ev.value,agent:ev.agent,mode:ev.mode}};
-    if (ev.op==='CON') conns.push({from:ev.target,to:ev.value,note:ev.note});
+    if (ev.op==='SUP'&&ev.target&&ev.field) sups[ev.target+'.'+ev.field]={a:{value:ev.oldValue,agent:'prior',mode:ev.meta?.priorMode||'declared'},b:{value:ev.value,agent:ev.agent,mode:ev.mode}};
+    if (ev.op==='CON'&&!ev.meta?.allocationType&&!ev.meta?.membershipOp) conns.push({from:ev.target,to:ev.value,note:ev.note});
     if (ev.op==='REC'&&ev.meta?.fwRestore) {
       const r=ev.meta.fwRestore;
       if(fws[r.key]){fws[r.key].name=r.newName;fws[r.key].mapping=r.newMapping;fws[r.key].meantValues=r.newMeantValues;}
-      // Recompute meant values for all records under new mapping
       Object.values(recs).forEach(rec=>{
         const fw=fws[r.key];if(!fw)return;
         const gv=rec[fw.givenField];
@@ -508,7 +707,7 @@ function replayTo(idx) {
     }
   });
 
-  // Build stacks
+  // Build stacks (for records only)
   const stacks={};
   cut.filter(e=>e.target&&e.field&&['SIG','ALT','NUL','SUP','INS'].includes(e.op)&&(!e.table||e.table==='records')).forEach(ev=>{
     if(!stacks[ev.target])stacks[ev.target]={};
@@ -516,7 +715,7 @@ function replayTo(idx) {
     stacks[ev.target][ev.field].push({value:ev.value,agent:ev.agent,mode:ev.mode,ts:ev.ts,op:ev.op,note:ev.note,oldValue:ev.oldValue});
   });
 
-  return {records:Object.values(recs), sups, conns, stacks, frameworks:fws};
+  return {records:Object.values(recs), resources:Object.values(resources), teams, allocs, sups, conns, stacks, frameworks:fws};
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -578,7 +777,7 @@ function showToast(ev){
 // RENDER
 // ═════════════════════════════════════════════════════════════════════════════
 function showV(v){view=v;document.getElementById('tDB').classList.toggle('on',v==='db');document.getElementById('tPR').classList.toggle('on',v==='profile');
-  ['toolbar','dbV','cmdBar'].forEach(id=>document.getElementById(id).style.display=v==='db'?'':'none');
+  ['toolbar','dbV','cmdBar','dtabs'].forEach(id=>document.getElementById(id).style.display=v==='db'?'':'none');
   document.getElementById('profV').className='pw'+(v==='profile'?' on':'');
   render();}
 
@@ -629,22 +828,29 @@ function renderHorizon(){
 function renderRecBan(){const el=document.getElementById('recBan');if(!recBanner||!isNow()){el.innerHTML='';return;}el.innerHTML=`<div class="rec-banner"><button class="b b-sm" style="float:right" onclick="recBanner=null;render()">Dismiss</button>${recBanner}</div>`;}
 function renderDTabs(){
   const el=document.getElementById('dtabs');
-  if(!derivedViews.length){el.style.display='none';return;}
   el.style.display='flex';
-  el.innerHTML=`<div class="dtab${activeTab==='records'?' on':''}" onclick="activeTab='records';render()">All Records</div>`+
-    derivedViews.map(v=>{const ot=v.origin?`Projected at ${v.origin.time}, user: ${v.origin.user}, fw: ${v.origin.frameworks.join('+')}`:'';return`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()" title="${esc(ot)}">${esc(v.name)}${v.origin?'<span class="dtab-origin">projected</span>':''}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`;}).join('');
-  Object.keys(customTables).forEach(k=>{
-    el.innerHTML+=`<div class="dtab${activeTab===k?' on':''}" onclick="activeTab='${k}';render()">${esc(customTables[k].label)}</div>`;
-  });
+  // First-class tabs
+  el.innerHTML=`<div class="dtab${activeTab==='records'?' on':''}" onclick="activeTab='records';selectedTeam=null;render()">Records</div>`+
+    `<div class="dtab${activeTab==='resources'?' on':''}" onclick="activeTab='resources';selectedTeam=null;render()">Resources</div>`+
+    `<div class="dtab${activeTab==='teams'?' on':''}" onclick="activeTab='teams';render()">Teams</div>`+
+    `<div class="dtab${activeTab==='definitions'?' on':''}" onclick="activeTab='definitions';selectedTeam=null;render()">Definitions</div>`+
+    derivedViews.map(v=>{const ot=v.origin?`Projected at ${v.origin.time}, user: ${v.origin.user}, fw: ${v.origin.frameworks.join('+')}`:'';return`<div class="dtab${activeTab===v.id?' on':''}" onclick="activeTab='${v.id}';render()" title="${esc(ot)}">${esc(v.name)}${v.origin?'<span class="dtab-origin">projected</span>':''}<span class="dtab-x" onclick="event.stopPropagation();derivedViews=derivedViews.filter(x=>x.id!=='${v.id}');if(activeTab==='${v.id}')activeTab='records';render()">×</span></div>`;}).join('')+
+    Object.keys(customTables).map(k=>`<div class="dtab${activeTab===k?' on':''}" onclick="activeTab='${k}';render()">${esc(customTables[k].label)}</div>`).join('');
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
 // DATABASE VIEW
 // ═════════════════════════════════════════════════════════════════════════════
 function renderDB(){
+  // Route to specialized renderers
+  if(activeTab==='resources') return renderResources();
+  if(activeTab==='teams') return renderTeams();
+  if(activeTab==='definitions') return renderDefinitions();
+
   const S=getS();const past=!isNow();
-  const givenFields=fields.filter(f=>f.layer==='given');
-  const meantFields=fields.filter(f=>f.layer==='meant');
+  const activeFields=fields.filter(f=>!f._retired);
+  const givenFields=activeFields.filter(f=>f.layer==='given');
+  const meantFields=activeFields.filter(f=>f.layer==='meant');
   const allFields=[...givenFields,...meantFields];
 
   // Handle derived views / custom tables
@@ -652,7 +858,7 @@ function renderDB(){
   if(activeTab!=='records') {
     const dv=derivedViews.find(v=>v.id===activeTab);
     if(dv){recs=dv.records;displayFields=allFields;}
-    else if(customTables[activeTab]){recs=Object.values(customTables[activeTab].data||{}).map((d,i)=>({uid:Object.keys(customTables[activeTab].data)[i],...d}));displayFields=customTables[activeTab].fields;} 
+    else if(customTables[activeTab]){recs=Object.values(customTables[activeTab].data||{}).map((d,i)=>({uid:Object.keys(customTables[activeTab].data)[i],...d}));displayFields=customTables[activeTab].fields;}
     else{activeTab='records';recs=S.records;displayFields=allFields;}
   } else {
     recs=activeFilter==='all'?S.records:S.records.filter(r=>{const st=r.status;return st===activeFilter;});
@@ -703,7 +909,8 @@ function renderDB(){
           const stk=S.stacks[r.uid]?.[f.key];const latest=stk?.length?stk[stk.length-1]:null;
           const provAgent=latest?.agent||'';const provMode=latest?.mode||'';
           const isOther=perspectiveUser&&r._notByUser?.[f.key];
-          const provSpan=provAgent?`<span class="c-prov">${esc(uName(provAgent))} · ${provMode}</span>`:'';
+          const epClass=provMode?`ep-${provMode}`:'';
+          const provSpan=provAgent?`<span class="c-prov">${esc(uName(provAgent))} · <span class="ep-badge ${epClass}">${provMode}</span></span>`:'';
           if(val==null){
             const at=absTypes[sk];const lbl=at==='cleared'?'recorded absent':'not yet collected';const cls=at==='cleared'?'c-nt-clr':'c-nt-nc';
             return`<td class="c-null${isOther?' c-other-perspective':''}"${!past?` ondblclick="startEd('${r.uid}','${f.key}')" oncontextmenu="showCellCtx(event,'${r.uid}','${f.key}')"`:''}> — <span class="c-nt ${cls}">${lbl}</span>${provSpan}</td>`;
@@ -872,15 +1079,18 @@ window.showCellCtx=(e,uid,fk)=>{
   let supInfo='';
   if(isSup){
     const s=S.sups[sk];
+    const modeA=s.a.mode||'declared',modeB=s.b.mode||'declared';
+    const rankA=EPISTEMIC_MODES[modeA]||3,rankB=EPISTEMIC_MODES[modeB]||3;
+    const recA=rankA>=rankB?' (recommended)':'',recB=rankB>rankA?' (recommended)':'';
     supInfo=`<div class="ctx-resolve">
       <div class="ctx-resolve-title">Conflicting sources — choose one to resolve</div>
       <div class="ctx-resolve-opt">
-        <div class="ctx-resolve-val">${esc(s.a.value)} <span class="ctx-resolve-src">${esc(uName(s.a.agent))}</span></div>
-        <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept</button>
+        <div class="ctx-resolve-val">${esc(s.a.value)} <span class="ctx-resolve-src">${esc(uName(s.a.agent))}</span> <span class="ep-badge ep-${modeA}">${modeA}</span></div>
+        <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.a.value)}','${esc(s.b.value)}','${esc(s.a.agent)}')">Accept${recA}</button>
       </div>
       <div class="ctx-resolve-opt">
-        <div class="ctx-resolve-val">${esc(s.b.value)} <span class="ctx-resolve-src">${esc(uName(s.b.agent))} · ${s.b.mode||'declared'}</span></div>
-        <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept</button>
+        <div class="ctx-resolve-val">${esc(s.b.value)} <span class="ctx-resolve-src">${esc(uName(s.b.agent))}</span> <span class="ep-badge ep-${modeB}">${modeB}</span></div>
+        <button class="ctx-resolve-btn" onclick="resolveConflict('${uid}','${fk}','${esc(s.b.value)}','${esc(s.a.value)}','${esc(s.b.agent)}')">Accept${recB}</button>
       </div>
     </div>`;
   }
@@ -900,14 +1110,19 @@ window.showCellCtx=(e,uid,fk)=>{
   // Source agent input
   const agentInput=`<input id="ctxAltAgent" placeholder="Source (e.g. Benefits System)" value="" style="flex:1;padding:4px 8px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:11px;outline:none;color:var(--txm)">`;
 
+  // Epistemic mode selector
+  const modeInput=`<select id="ctxAltMode" style="padding:4px 8px;border:1px solid var(--bd);border-radius:3px;font-family:inherit;font-size:11px">
+    <option value="declared">declared</option><option value="observed">observed</option><option value="measured">measured</option><option value="inferred">inferred</option><option value="aggregated">aggregated</option>
+  </select>`;
+
   d.innerHTML=`<div class="ctx-label">${esc(f.label)} <span style="font-size:8px;color:#78716c">given</span></div>
     <div class="ctx-val">Current: ${valDisplay}</div>
     ${supInfo}
     <div class="ctx-sep"></div>
     <div class="ctx-section">Enter Alternative Value</div>
     <div class="ctx-input-row">${altInput}</div>
-    <div style="padding:0 14px 2px;font-size:9px;color:var(--txf)">Source agent:</div>
-    <div class="ctx-input-row">${agentInput}<button onclick="submitCellAlt('${uid}','${fk}')">Submit</button></div>
+    <div style="padding:0 14px 2px;font-size:9px;color:var(--txf)">Source agent &amp; epistemic mode:</div>
+    <div class="ctx-input-row">${agentInput}${modeInput}<button onclick="submitCellAlt('${uid}','${fk}')">Submit</button></div>
     <div class="ctx-sep"></div>
     <div class="ctx-item" onclick="startEd('${uid}','${fk}');closeCtx()">✎ Edit value directly</div>
     ${val!=null?`<div class="ctx-item" onclick="pushEv('NUL','${uid}','${fk}');absTypes['${uid}.${fk}']='cleared';if(liveData['${uid}'])liveData['${uid}']['${fk}']=null;scrubPos=events.length;closeCtx();render()">∅ Clear value</div>`:''}
@@ -921,28 +1136,36 @@ window.showCellCtx=(e,uid,fk)=>{
 window.submitCellAlt=(uid,fk)=>{
   const valEl=document.getElementById('ctxAltVal');
   const agentEl=document.getElementById('ctxAltAgent');
+  const modeEl=document.getElementById('ctxAltMode');
   if(!valEl)return;
   const newVal=valEl.value.trim();if(!newVal)return;
   const agent=agentEl?.value.trim()||U_REYES;
+  const mode=modeEl?.value||'declared';
   const old=liveData[uid]?.[fk];
+
+  // Get existing claim info for operator inference
+  const S=getS();const stack=S.stacks[uid]?.[fk];
+  const latest=stack?.length?stack[stack.length-1]:null;
+  const existingAgent=latest?.agent||U_REYES;
+  const existingMode=latest?.mode||'declared';
+
+  // Infer operator based on epistemic modes
+  const inferredOp=inferOperator(existingAgent,existingMode,agent,mode);
 
   // Check conflict policy
   const policy=fieldPolicies[fk]||'hold';
 
-  if(policy==='newest'){
-    // Auto-accept the new value
-    pushEv('ALT',uid,fk,newVal,{oldValue:old,agent,mode:'declared',note:`Auto-accepted (policy: newest)`});
+  if(policy==='newest'||inferredOp==='ALT'){
+    pushEv('ALT',uid,fk,newVal,{oldValue:old,agent,mode,note:policy==='newest'?`Auto-accepted (policy: newest)`:`${mode} observation by ${uName(agent)}`});
     liveSet(uid,fk,newVal);
-    // Derive meant if needed
     for(const[fwKey,fw]of Object.entries(frameworks)){
       if(fw.givenField===fk){const om=fw.mapping[old]||null;const nm=fw.mapping[newVal]||null;if(om!==nm)pushEv('ALT',uid,fw.meantField,nm,{oldValue:om,agent:U_SYSTEM,mode:'inferred'});}
     }
   } else if(policy==='oldest'){
-    // Keep existing, just log the competing claim
-    pushEv('SUP',uid,fk,newVal,{agent,mode:'measured',oldValue:old,note:`Rejected (policy: keep oldest) — held as record`});
+    pushEv('SUP',uid,fk,newVal,{agent,mode,oldValue:old,note:`Rejected (policy: keep oldest) — held as record`});
   } else {
     // 'hold' or 'ask' — create a SUP event (conflict)
-    pushEv('SUP',uid,fk,newVal,{agent,mode:'measured',oldValue:old});
+    pushEv('SUP',uid,fk,newVal,{agent,mode,oldValue:old,note:`${mode} by ${uName(agent)} — conflicts with ${existingMode} by ${uName(existingAgent)}`});
   }
 
   scrubPos=events.length;closeCtx();render();
@@ -1096,6 +1319,409 @@ window.addField=()=>{
 window.linkRows=()=>{const arr=Array.from(selectedRows);if(arr.length<2)return;pushEv('CON',arr[0],null,arr[1],{note:'Linked'});selectedRows.clear();scrubPos=events.length;render();};
 
 // ═════════════════════════════════════════════════════════════════════════════
+// RESOURCES VIEW
+// ═════════════════════════════════════════════════════════════════════════════
+function renderResources(){
+  const past=!isNow();
+  const S=getS();
+  const recs=Object.values(liveResources).filter(Boolean);
+  // Replay resources from state if scrubbing
+  let resData=recs;
+  if(!isNow()){
+    resData=[];
+    const cut=events.slice(0,scrubPos);
+    const tmp={};
+    cut.forEach(ev=>{
+      if(ev.table!=='resources')return;
+      if(ev.op==='INS'&&ev.target&&!ev.field) tmp[ev.target]={uid:ev.target,_name:ev.value};
+      if(['SIG','ALT','INS'].includes(ev.op)&&ev.target&&ev.field){if(!tmp[ev.target])tmp[ev.target]={uid:ev.target};tmp[ev.target][ev.field]=ev.value;}
+      if(ev.op==='NUL'&&ev.target&&!ev.field) delete tmp[ev.target];
+      if(ev.op==='NUL'&&ev.target&&ev.field&&tmp[ev.target]) tmp[ev.target][ev.field]=null;
+    });
+    resData=Object.values(tmp);
+  }
+
+  // Find allocations
+  const allocs={};
+  const cut2=isNow()?events:events.slice(0,scrubPos);
+  cut2.forEach(ev=>{if(ev.meta?.allocationType&&ev.op==='CON'){if(!allocs[ev.target])allocs[ev.target]=[];allocs[ev.target].push({to:ev.value,units:ev.meta.units||1,type:ev.meta.allocationType,ts:ev.ts});}});
+
+  document.getElementById('toolbar').innerHTML=!past?`<button class="b" onclick="addResource()">+ Add resource</button><button class="b" onclick="openAllocateModal()">Allocate</button>`:'';
+  document.getElementById('dbV').innerHTML=`<table>
+    <thead><tr><th>ID</th>${resourceFields.map(f=>`<th>${esc(f.label)}</th>`).join('')}<th>Allocations</th>${!past?'<th style="width:28px"></th>':''}</tr></thead>
+    <tbody>${resData.map(r=>{
+      const al=allocs[r.uid]||[];
+      return`<tr><td class="c-id">${r.uid}</td>${resourceFields.map(f=>{
+        const v=r[f.key];
+        if(f.key==='capacity'||f.key==='available'){
+          const cap=parseFloat(r.capacity)||0,avail=parseFloat(r.available)||0;
+          const pct=cap>0?Math.round((avail/cap)*100):0;
+          if(f.key==='available') return`<td><div class="res-cap">${v||'—'}<div class="res-bar"><div class="res-bar-fill" style="width:${pct}%"></div></div></div></td>`;
+        }
+        if(f.key==='category') return`<td><span class="res-cat">${esc(v||'—')}</span></td>`;
+        return`<td>${v!=null?esc(v):'<span class="c-null">—</span>'}</td>`;
+      }).join('')}<td style="font-size:10px;color:var(--txm)">${al.length?al.map(a=>`${a.to} (${a.units})`).join(', '):'none'}</td>${!past?`<td><button class=mb onclick="pushEv('NUL','${r.uid}',null,null,{table:'resources'});delete liveResources['${r.uid}'];scrubPos=events.length;render()">×</button></td>`:''}</tr>`;
+    }).join('')}
+    <tr class="sum-row"><td colspan="${resourceFields.length+2}">${resData.length} resources</td>${!past?'<td></td>':''}</tr>
+    </tbody></table>`;
+}
+
+window.addResource=()=>{
+  openModal('New Resource',resourceFields.map(f=>({key:f.key,label:f.label,type:f.type==='select'?'select':'text',opts:f.opts})),vals=>{
+    const uid='#res'+String(Date.now()).slice(-4)+Math.random().toString(36)[2];
+    liveResources[uid]={uid};
+    pushEv('INS',uid,null,vals.name||'Resource',{table:'resources'});
+    resourceFields.forEach(f=>{
+      if(vals[f.key]){pushEv('SIG',uid,f.key,vals[f.key],{table:'resources'});liveResources[uid][f.key]=vals[f.key];}
+    });
+    scrubPos=events.length;render();
+  });
+};
+
+window.openAllocateModal=()=>{
+  const resIds=Object.keys(liveResources);const recIds=Object.keys(liveData);
+  if(!resIds.length||!recIds.length) return;
+  openModal('Allocate Resource',[
+    {key:'resource',label:'Resource',type:'select',opts:resIds.map(id=>`${id} (${liveResources[id]?.name||'?'})`)},
+    {key:'record',label:'Record',type:'select',opts:recIds.map(id=>`${id} (${liveData[id]?.name||'?'})`)},
+    {key:'units',label:'Units',type:'text'},
+  ],vals=>{
+    const resId=vals.resource.split(' ')[0],recId=vals.record.split(' ')[0],units=parseInt(vals.units)||1;
+    pushEv('CON',resId,null,recId,{table:'resources',meta:{allocationType:'allocation',units},note:`Allocated ${units} unit(s)`});
+    // Update available count
+    const avail=parseInt(liveResources[resId]?.available)||0;
+    if(avail>0){liveResources[resId].available=String(avail-units);pushEv('ALT',resId,'available',String(avail-units),{table:'resources',oldValue:String(avail)});}
+    scrubPos=events.length;render();
+  });
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// TEAMS VIEW
+// ═════════════════════════════════════════════════════════════════════════════
+function renderTeams(){
+  const past=!isNow();
+  if(selectedTeam) return renderTeamDetail();
+
+  document.getElementById('toolbar').innerHTML=!past?`<button class="b" onclick="addTeam()">+ Add team</button>`:'';
+
+  const teams=Object.entries(liveTeams);
+  if(!teams.length){
+    document.getElementById('dbV').innerHTML='<div style="padding:40px;color:var(--txm);text-align:center">No teams yet. Click "+ Add team" to create one.</div>';
+    return;
+  }
+
+  document.getElementById('dbV').innerHTML=`<div class="team-grid">${teams.map(([tid,t])=>{
+    const members=teamMemberships[tid]||[];
+    const color=t.color||'#2563eb';
+    return`<div class="team-card" onclick="selectedTeam='${tid}';render()">
+      <div class="team-card-head"><div class="team-swatch" style="background:${color}"></div><span class="team-name">${esc(t.name||tid)}</span></div>
+      <div class="team-desc">${esc(t.description||'')}</div>
+      <div class="team-meta">
+        <span class="consent-badge">${esc(t.consent_mode||'majority')}</span>
+        <span class="opacity-badge">${esc(t.opacity||'transparent')}</span>
+        <span style="font-size:10px;color:var(--txm)">${members.length} member${members.length!==1?'s':''}</span>
+      </div>
+      <div class="team-members">${members.slice(0,3).map(m=>{
+        const name=users[m.entityId]?.name||liveData[m.entityId]?.name||liveTeams[m.entityId]?.name||m.entityId;
+        return`<div class="team-member-row"><span class="team-member-role">${m.role}</span> ${esc(name)} <span style="font-size:9px;color:var(--txf)">${m.entityType}</span></div>`;
+      }).join('')}${members.length>3?`<div style="font-size:10px;color:var(--txf);padding:2px 0">+${members.length-3} more</div>`:''}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderTeamDetail(){
+  const tid=selectedTeam;const t=liveTeams[tid];if(!t){selectedTeam=null;return renderTeams();}
+  const past=!isNow();const members=teamMemberships[tid]||[];const color=t.color||'#2563eb';
+
+  // Find governed schema proposals
+  const proposals=governanceQueue.filter(p=>p.teamId===tid);
+
+  document.getElementById('toolbar').innerHTML=`<button class="b" onclick="selectedTeam=null;render()">← Teams</button>${!past?` <button class="b" onclick="openAddMember('${tid}')">+ Add member</button>`:''} ${!past?`<button class="b" onclick="openGovernancePanel('${tid}')">Governance</button>`:''}`;
+
+  document.getElementById('dbV').innerHTML=`<div class="team-detail">
+    <div class="team-detail-head"><div class="team-detail-swatch" style="background:${color}"></div><span class="team-detail-name">${esc(t.name)}</span></div>
+    <div style="font-size:12px;color:var(--tx2);margin-bottom:12px">${esc(t.description||'No description')}</div>
+    <div class="team-meta" style="margin-bottom:16px">
+      <span class="consent-badge">${esc(t.consent_mode||'majority')}</span>
+      <span class="opacity-badge">opacity: ${esc(t.opacity||'transparent')}</span>
+    </div>
+
+    <div class="team-section">
+      <div class="team-section-head">Members (${members.length})</div>
+      ${members.map(m=>{
+        const name=users[m.entityId]?.name||liveData[m.entityId]?.name||liveTeams[m.entityId]?.name||m.entityId;
+        const icon=m.entityType==='user'?'👤':m.entityType==='team'?'👥':'📋';
+        return`<div style="padding:8px 12px;border-bottom:1px solid var(--bdl);display:flex;align-items:center;gap:8px;font-size:13px">
+          <span>${icon}</span><span style="flex:1">${esc(name)}</span>
+          <span class="team-member-role">${m.role}</span>
+          <span style="font-size:9px;color:var(--txf)">${m.entityType}</span>
+          ${!past?`<button class=mb onclick="removeTeamMember('${tid}','${m.entityId}')">×</button>`:''}
+        </div>`;
+      }).join('')||'<div style="padding:12px;color:var(--txm);font-size:12px">No members yet</div>'}
+    </div>
+
+    ${proposals.length?`<div class="team-section" style="margin-top:12px">
+      <div class="team-section-head">Schema Proposals (${proposals.length})</div>
+      ${proposals.map(p=>`<div class="gov-proposal">
+        <div class="gov-proposal-head">
+          <span class="gov-proposal-title">${esc(p.type)}: ${esc(JSON.stringify(p.detail))}</span>
+          <span class="gov-status ${p.status==='pending'?'gov-status-pending':'gov-status-resolved'}">${p.status}</span>
+        </div>
+        ${p.status==='pending'&&!past?`<div class="gov-positions">
+          ${['adopt','adopt_with_extension','needs_modification','cannot_adopt'].map(pos=>`<button class="gov-pos-btn${p.positions[U_REYES]===pos?' active':''}" onclick="submitPosition('${p.id}','${U_REYES}','${pos}')">${pos.replace(/_/g,' ')}</button>`).join('')}
+        </div>`:''}
+      </div>`).join('')}
+    </div>`:''}
+  </div>`;
+}
+
+window.addTeam=()=>{
+  openModal('New Team',teamFields.map(f=>({key:f.key,label:f.label,type:f.type==='select'?'select':'text',opts:f.opts})),vals=>{
+    const tid='~team'+String(Date.now()).slice(-4)+Math.random().toString(36)[2];
+    liveTeams[tid]={uid:tid};teamMemberships[tid]=[];
+    pushEv('INS',tid,null,vals.name||'Team',{table:'teams'});
+    teamFields.forEach(f=>{
+      if(vals[f.key]){pushEv('SIG',tid,f.key,vals[f.key],{table:'teams'});liveTeams[tid][f.key]=vals[f.key];}
+    });
+    scrubPos=events.length;render();
+  });
+};
+
+window.openAddMember=(tid)=>{
+  const userIds=Object.keys(users);const recIds=Object.keys(liveData);const teamIds=Object.keys(liveTeams).filter(t=>t!==tid);
+  const allEntities=[
+    ...userIds.map(id=>({id,name:users[id].name,type:'user'})),
+    ...recIds.map(id=>({id,name:liveData[id]?.name||id,type:'record'})),
+    ...teamIds.map(id=>({id,name:liveTeams[id]?.name||id,type:'team'})),
+  ];
+  openModal('Add Member',[
+    {key:'entity',label:'Entity',type:'select',opts:allEntities.map(e=>`${e.id} (${e.name}) [${e.type}]`)},
+    {key:'role',label:'Role',type:'select',opts:['lead','member','observer']},
+  ],vals=>{
+    const parts=vals.entity.split(' ');const entityId=parts[0];
+    const typeMatch=vals.entity.match(/\[(\w+)\]/);const entityType=typeMatch?typeMatch[1]:'user';
+    addTeamMember(tid,entityId,vals.role,entityType);
+  });
+};
+
+function addTeamMember(teamId,entityId,role,entityType){
+  if(!teamMemberships[teamId])teamMemberships[teamId]=[];
+  teamMemberships[teamId].push({entityId,role,entityType});
+  pushEv('CON',teamId,null,entityId,{table:'teams',meta:{membershipOp:'add',role,entityType},note:`Added ${entityType} as ${role}`});
+  scrubPos=events.length;render();
+}
+
+window.removeTeamMember=(teamId,entityId)=>{
+  if(!teamMemberships[teamId])return;
+  teamMemberships[teamId]=teamMemberships[teamId].filter(m=>m.entityId!==entityId);
+  pushEv('NUL',teamId,entityId,null,{table:'teams',meta:{membershipOp:'remove'},note:`Removed ${entityId}`});
+  scrubPos=events.length;render();
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// DEFINITIONS VIEW (Schema as first-class table)
+// ═════════════════════════════════════════════════════════════════════════════
+function renderDefinitions(){
+  const past=!isNow();
+  const activeFields=fields.filter(f=>!f._retired);
+  document.getElementById('toolbar').innerHTML=!past?`<button class="b" onclick="addField()">+ Add field</button>`:'';
+
+  document.getElementById('dbV').innerHTML=`<table>
+    <thead><tr><th>Key</th><th>Label</th><th>Layer</th><th>Type</th><th>Definition</th><th>Options</th><th>Framework</th>${!past?'<th>Actions</th>':''}</tr></thead>
+    <tbody>${activeFields.map((f,i)=>{
+      const layerColor=f.layer==='meant'?'var(--meant)':'#78716c';
+      const fw=f.framework?frameworks[f.framework]:null;
+      return`<tr>
+        <td class="c-id">${esc(f.key)}</td>
+        <td ondblclick="startDefLabelEdit(${i})" style="cursor:text">${esc(f.label)}</td>
+        <td><span style="color:${layerColor};font-weight:600;font-size:11px">${f.layer}</span></td>
+        <td style="font-size:11px">${esc(f.type)}${f.type==='derived'?' <span style="color:var(--meant)">ƒ</span>':''}</td>
+        <td ondblclick="startDefDefEdit(${i})" style="cursor:text;font-size:12px;color:var(--tx2)">${esc(f.def||'—')}</td>
+        <td style="font-size:10px;color:var(--txm);max-width:200px;overflow:hidden;text-overflow:ellipsis">${f.opts?f.opts.join(', '):'—'}</td>
+        <td style="font-size:11px">${fw?esc(fw.name):'—'}</td>
+        ${!past?`<td style="white-space:nowrap">
+          <button class=mb title="Rename" onclick="promptRenameField('${f.key}')">✎</button>
+          ${f.type==='select'?`<button class=mb title="Add option" onclick="promptAddOption('${f.key}')">+</button>`:''}
+          ${f.layer!=='meant'?`<button class=mb title="Change type" onclick="promptChangeType('${f.key}')">⇄</button>`:''}
+          ${i>0?`<button class=mb title="Move up" onclick="reorderSchemaField('${f.key}',${i-1})">↑</button>`:''}
+          ${i<activeFields.length-1?`<button class=mb title="Move down" onclick="reorderSchemaField('${f.key}',${i+1})">↓</button>`:''}
+          <button class=mb title="Remove" onclick="removeSchemaField('${f.key}')" style="color:var(--danger)">×</button>
+        </td>`:''}</tr>`;
+    }).join('')}
+    <tr class="sum-row"><td colspan="${!past?8:7}">${activeFields.length} fields (${activeFields.filter(f=>f.layer==='given').length} given, ${activeFields.filter(f=>f.layer==='meant').length} meant)</td></tr>
+    </tbody></table>`;
+}
+
+window.startDefLabelEdit=(idx)=>{
+  if(!isNow())return;const f=fields.filter(x=>!x._retired)[idx];if(!f)return;
+  const newLabel=prompt('Rename field:',f.label);
+  if(newLabel&&newLabel!==f.label) renameSchemaField(f.key,newLabel);
+};
+window.startDefDefEdit=(idx)=>{
+  if(!isNow())return;const f=fields.filter(x=>!x._retired)[idx];if(!f)return;
+  const newDef=prompt('Edit definition:',f.def);
+  if(newDef&&newDef!==f.def){const old=f.def;f.def=newDef;pushEv('ALT',null,f.key,newDef,{oldValue:old,meta:{schemaOp:'edit_def'},note:`Definition: "${old}" → "${newDef}"`});scrubPos=events.length;render();}
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SCHEMA ALTERATION (all logged in EO notation)
+// ═════════════════════════════════════════════════════════════════════════════
+function schemaGoverned(){
+  // Check if any team governs schema changes
+  return Object.entries(liveTeams).find(([tid,t])=>teamMemberships[tid]?.length>0);
+}
+
+function removeSchemaField(fieldKey){
+  const f=fields.find(x=>x.key===fieldKey);if(!f)return;
+  const gov=schemaGoverned();
+  if(gov){createSchemaProposal('remove_field',{fieldKey,label:f.label},gov[0]);return;}
+  f._retired=true;
+  pushEv('NUL',null,fieldKey,null,{meta:{schemaOp:'remove_field',fieldDef:{...f}},note:`Retired field: ${f.label}`});
+  schemaHistory.push({action:'remove',fieldKey,before:{...f}});
+  scrubPos=events.length;render();
+}
+
+function renameSchemaField(fieldKey,newLabel){
+  const f=fields.find(x=>x.key===fieldKey);if(!f)return;
+  const gov=schemaGoverned();
+  if(gov){createSchemaProposal('rename',{fieldKey,oldLabel:f.label,newLabel},gov[0]);return;}
+  const oldLabel=f.label;f.label=newLabel;
+  pushEv('ALT',null,fieldKey,newLabel,{oldValue:oldLabel,meta:{schemaOp:'rename',oldLabel,newLabel},note:`Renamed: ${oldLabel} → ${newLabel}`});
+  schemaHistory.push({action:'rename',fieldKey,before:oldLabel,after:newLabel});
+  scrubPos=events.length;render();
+}
+
+window.promptRenameField=(fk)=>{
+  const f=fields.find(x=>x.key===fk);if(!f)return;
+  const newLabel=prompt('New label for '+f.label+':',f.label);
+  if(newLabel&&newLabel!==f.label) renameSchemaField(fk,newLabel);
+};
+
+window.promptAddOption=(fk)=>{
+  const f=fields.find(x=>x.key===fk);if(!f||!f.opts)return;
+  const newOpt=prompt('Add option to '+f.label+':');
+  if(!newOpt||f.opts.includes(newOpt))return;
+  const gov=schemaGoverned();
+  if(gov){createSchemaProposal('add_option',{fieldKey:fk,option:newOpt},gov[0]);return;}
+  f.opts.push(newOpt);
+  pushEv('SIG',null,fk,newOpt,{meta:{schemaOp:'add_option'},note:`Added option "${newOpt}" to ${f.label}`});
+  scrubPos=events.length;render();
+};
+
+window.promptChangeType=(fk)=>{
+  const f=fields.find(x=>x.key===fk);if(!f)return;
+  const types=['text','select'];
+  const newType=prompt('Change type of '+f.label+' (current: '+f.type+').\nOptions: '+types.join(', '));
+  if(!newType||newType===f.type||!types.includes(newType))return;
+  const gov=schemaGoverned();
+  if(gov){createSchemaProposal('change_type',{fieldKey:fk,oldType:f.type,newType},gov[0]);return;}
+  const oldType=f.type;f.type=newType;
+  if(newType==='select'&&!f.opts){const opts=prompt('Enter options (comma-separated):');f.opts=opts?opts.split(',').map(s=>s.trim()).filter(Boolean):[];}
+  if(newType==='text')delete f.opts;
+  pushEv('REC',null,fk,newType,{meta:{schemaOp:'change_type',oldType,newType},note:`Type changed: ${oldType} → ${newType}`});
+  schemaHistory.push({action:'change_type',fieldKey:fk,before:oldType,after:newType});
+  scrubPos=events.length;render();
+};
+
+window.reorderSchemaField=(fk,newIdx)=>{
+  const activeF=fields.filter(x=>!x._retired);
+  const oldIdx=activeF.findIndex(x=>x.key===fk);if(oldIdx<0||newIdx<0||newIdx>=activeF.length)return;
+  // Find actual indices in full fields array
+  const fOldIdx=fields.indexOf(activeF[oldIdx]);const fNewIdx=fields.indexOf(activeF[newIdx]);
+  const [moved]=fields.splice(fOldIdx,1);fields.splice(fNewIdx,0,moved);
+  pushEv('SEG',null,fk,String(newIdx),{meta:{schemaOp:'reorder',oldIndex:oldIdx,newIndex:newIdx},note:`Moved ${fk} from position ${oldIdx} to ${newIdx}`});
+  scrubPos=events.length;render();
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
+// GOVERNANCE
+// ═════════════════════════════════════════════════════════════════════════════
+function createSchemaProposal(type,detail,teamId){
+  const id='prop-'+Date.now();
+  const proposal={id,type,detail,teamId,status:'pending',positions:{},result:null};
+  governanceQueue.push(proposal);
+  pushEv('SIG',id,'proposal',JSON.stringify(detail),{table:'governance',meta:{governance:true,proposalType:type,teamId},note:`Schema proposal: ${type}`});
+  scrubPos=events.length;
+  // Auto-navigate to team detail
+  selectedTeam=teamId;activeTab='teams';render();
+}
+
+window.submitPosition=(proposalId,userId,position)=>{
+  const p=governanceQueue.find(x=>x.id===proposalId);if(!p||p.status!=='pending')return;
+  p.positions[userId]=position;
+  pushEv('SIG',proposalId,userId,position,{table:'governance',meta:{governance:true,positionType:position},note:`${uName(userId)}: ${position}`});
+  checkConsentResolution(proposalId);
+  scrubPos=events.length;render();
+};
+
+function checkConsentResolution(proposalId){
+  const p=governanceQueue.find(x=>x.id===proposalId);if(!p||p.status!=='pending')return;
+  const team=liveTeams[p.teamId];if(!team)return;
+  const members=teamMemberships[p.teamId]||[];if(!members.length)return;
+  const mode=team.consent_mode||'majority';
+  const positions=Object.values(p.positions);
+  const blocks=positions.filter(v=>v==='cannot_adopt');
+  const adopts=positions.filter(v=>v==='adopt'||v==='adopt_with_extension');
+
+  if(mode==='lead_decides'){
+    const lead=members.find(m=>m.role==='lead');
+    if(lead&&p.positions[lead.entityId]){
+      p.status='resolved';p.result=p.positions[lead.entityId]!=='cannot_adopt'?'adopted':'blocked';
+      if(p.result==='adopted') applyProposal(p);
+    }
+  } else if(mode==='majority'){
+    if(positions.length>=Math.ceil(members.length/2)){
+      p.status='resolved';p.result=adopts.length>blocks.length?'adopted':'blocked';
+      if(p.result==='adopted') applyProposal(p);
+    }
+  } else if(mode==='unanimous'){
+    if(positions.length===members.length){
+      p.status='resolved';p.result=blocks.length===0?'adopted':'blocked';
+      if(p.result==='adopted') applyProposal(p);
+    }
+  }
+}
+
+function applyProposal(proposal){
+  const d=proposal.detail;
+  if(proposal.type==='add_field'){
+    const opts=d.opts?d.opts.split(',').map(s=>s.trim()).filter(Boolean):null;
+    fields.push({key:d.key,label:d.label,type:opts?'select':'text',layer:'given',def:d.def||'',opts});
+    pushEv('SIG',null,d.key,d.label,{meta:{schemaOp:'add_field'},note:`Field added via governance: ${d.label}`});
+  } else if(proposal.type==='remove_field'){
+    const f=fields.find(x=>x.key===d.fieldKey);if(f)f._retired=true;
+    pushEv('NUL',null,d.fieldKey,null,{meta:{schemaOp:'remove_field'},note:`Field retired via governance: ${d.label}`});
+  } else if(proposal.type==='rename'){
+    const f=fields.find(x=>x.key===d.fieldKey);if(f)f.label=d.newLabel;
+    pushEv('ALT',null,d.fieldKey,d.newLabel,{oldValue:d.oldLabel,meta:{schemaOp:'rename'},note:`Renamed via governance: ${d.oldLabel} → ${d.newLabel}`});
+  } else if(proposal.type==='add_option'){
+    const f=fields.find(x=>x.key===d.fieldKey);if(f?.opts)f.opts.push(d.option);
+    pushEv('SIG',null,d.fieldKey,d.option,{meta:{schemaOp:'add_option'},note:`Option added via governance: ${d.option}`});
+  } else if(proposal.type==='change_type'){
+    const f=fields.find(x=>x.key===d.fieldKey);if(f)f.type=d.newType;
+    pushEv('REC',null,d.fieldKey,d.newType,{meta:{schemaOp:'change_type',oldType:d.oldType,newType:d.newType},note:`Type changed via governance`});
+  }
+}
+
+window.openGovernancePanel=(teamId)=>{
+  const t=liveTeams[teamId];if(!t)return;
+  const proposals=governanceQueue.filter(p=>p.teamId===teamId);
+  document.getElementById('modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal">
+    <h3>Governance — ${esc(t.name)}</h3>
+    <p>Consent mode: <b>${esc(t.consent_mode||'majority')}</b>. Schema changes by team members go through consent rounds.</p>
+    ${proposals.length?proposals.map(p=>`<div class="gov-proposal">
+      <div class="gov-proposal-head">
+        <span class="gov-proposal-title">${esc(p.type.replace(/_/g,' '))}</span>
+        <span class="gov-status ${p.status==='pending'?'gov-status-pending':'gov-status-resolved'}">${p.status}${p.result?' ('+p.result+')':''}</span>
+      </div>
+      <div style="font-size:11px;color:var(--tx2);margin:4px 0">${esc(JSON.stringify(p.detail))}</div>
+      ${Object.entries(p.positions).map(([u,pos])=>`<div style="font-size:10px;color:var(--txm)">${esc(uName(u))}: ${pos}</div>`).join('')}
+    </div>`).join(''):'<p style="color:var(--txm);font-style:italic">No proposals yet.</p>'}
+    <div class="mfoot"><button class="b" onclick="closeModal()">Close</button></div>
+  </div></div>`;
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
 // COMMAND BAR
 // ═════════════════════════════════════════════════════════════════════════════
 window.execCmd=()=>{const raw=document.getElementById('cmdIn').value.trim();if(!raw)return;document.getElementById('cmdIn').value='';
@@ -1132,6 +1758,29 @@ function parseCMD(raw){
         pushEv('INS',target,null,name,{table:name});activeTab=name;
         return`Table "${name}" created. Use SIG(table:${name}.field, "definition") to add fields.`;
       }
+      if(target.startsWith('resource:')){
+        const name=target.replace('resource:','').replace(/"/g,'');
+        const uid='#res'+String(Date.now()).slice(-4)+Math.random().toString(36)[2];
+        liveResources[uid]={uid,name};
+        pushEv('INS',uid,null,name,{table:'resources'});pushEv('SIG',uid,'name',name,{table:'resources'});
+        activeTab='resources';return`Resource ${uid} created: "${name}"`;
+      }
+      if(target.startsWith('team:')){
+        const name=target.replace('team:','').replace(/"/g,'');
+        const uid='~team'+String(Date.now()).slice(-4)+Math.random().toString(36)[2];
+        liveTeams[uid]={uid,name};teamMemberships[uid]=[];
+        pushEv('INS',uid,null,name,{table:'teams'});pushEv('SIG',uid,'name',name,{table:'teams'});
+        activeTab='teams';return`Team ${uid} created: "${name}"`;
+      }
+      if(target.startsWith('schema:')){
+        const label=target.replace('schema:','').replace(/"/g,'');
+        const key=label.toLowerCase().replace(/\s+/g,'_');
+        if(fields.find(f=>f.key===key))throw new Error(`Field "${key}" already exists`);
+        const def=args[1]?.replace(/"/g,'')||'';
+        fields.push({key,label,type:'text',layer:'given',def});
+        pushEv('SIG',null,key,label,{meta:{schemaOp:'add_field'},note:`Added field: ${label}`});
+        return`Field "${label}" (${key}) added to schema`;
+      }
       const uid='@'+String(events.length).padStart(3,'0')+Math.random().toString(36)[2];
       const name=args[1]?.replace(/"/g,'')||'';
       liveData[uid]={name};pushEv('INS',uid,null,name||uid);
@@ -1163,11 +1812,27 @@ function parseCMD(raw){
       for(const[fwKey,fw]of Object.entries(frameworks)){if(fw.givenField===dotM[2]){const om=fw.mapping[old]||null;const nm=fw.mapping[nv]||null;if(om!==nm)pushEv('ALT',dotM[1],fw.meantField,nm,{oldValue:om,agent:U_SYSTEM,mode:'inferred'});}}
       return`${old} → ${nv}`;
     }
-    case'CON':{if(args.length<2)throw new Error('CON(@uid1, @uid2)');pushEv('CON',args[0].trim(),null,args[1].trim(),{note:args[2]?.replace(/"/g,'')||'linked'});return'Linked';}
+    case'CON':{
+      if(args.length<2)throw new Error('CON(@uid1, @uid2) or CON(#resource, @record)');
+      const a0=args[0].trim(),a1=args[1].trim();
+      // Resource allocation
+      if(a0.startsWith('#res')&&a1.startsWith('@')){
+        pushEv('CON',a0,null,a1,{table:'resources',meta:{allocationType:'allocation',units:1},note:'Allocated via EOQL'});
+        return`Allocated ${a0} → ${a1}`;
+      }
+      // Team membership
+      if(a0.startsWith('~team')){
+        const role=args[2]?.replace(/"/g,'')||'member';
+        const entityType=users[a1]?'user':liveData[a1]?'record':liveTeams[a1]?'team':'user';
+        addTeamMember(a0,a1,role,entityType);
+        return`Added ${a1} to ${a0} as ${role}`;
+      }
+      pushEv('CON',a0,null,a1,{note:args[2]?.replace(/"/g,'')||'linked'});return'Linked';
+    }
     case'SUP':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);const v=args[1]?.replace(/"/g,'');if(!dotM||!v)throw new Error('SUP(@uid.field, "value")');const f=fields.find(x=>x.key===dotM[2]);if(f?.layer==='meant')throw new Error('SUP only applies to Given fields. Meant fields are derived.');const r=S.records.find(x=>x.uid===dotM[1]);if(!r)throw new Error(`${dotM[1]} not found`);pushEv('SUP',dotM[1],dotM[2],v,{agent:U_BENEFITS,mode:'measured',oldValue:r[dotM[2]]});return'Conflict held';}
     case'NUL':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(dotM){pushEv('NUL',dotM[1],dotM[2]);absTypes[dotM[1]+'.'+dotM[2]]='cleared';if(liveData[dotM[1]])liveData[dotM[1]][dotM[2]]=null;return'Absence recorded';}pushEv('NUL',args[0].trim());delete liveData[args[0].trim()];return'Entity removed';}
     case'REC':{const fwKey=Object.keys(frameworks).find(k=>args[0].trim().includes(k));if(fwKey){openREC(fwKey);return'Opening REC dialog...';}throw new Error('REC(housing) or REC(enrollment)');}
-    case'SOURCE':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(!dotM)throw new Error('SOURCE(@uid.field)');const st=S.stacks[dotM[1]]?.[dotM[2]];if(!st?.length)return'No claims found';return st.map(c=>`${c.op}("${c.value||'∅'}") by ${uName(c.agent)}, ${c.mode}`).join(' → ');}
+    case'SOURCE':{const dotM=args[0].trim().match(/^(@\w+)\.(\w+)$/);if(!dotM)throw new Error('SOURCE(@uid.field)');const st=S.stacks[dotM[1]]?.[dotM[2]];if(!st?.length)return'No claims found';const phase=claimPhase(S.stacks,dotM[1],dotM[2]);return`[${phase}] `+st.map(c=>`${c.op}("${c.value||'∅'}") by ${uName(c.agent)}, ${c.mode} [rank:${EPISTEMIC_MODES[c.mode]||'?'}]`).join(' → ');}
     default:throw new Error(`Unknown: ${op}`);
   }
 }
@@ -1375,6 +2040,7 @@ const acOps = [
   {key:'SUP', label:'Supersede', desc:'Hold a conflicting claim on a field', hint:'SUP(@uid.field, "value")'},
   {key:'CON', label:'Connect', desc:'Link two entities together', hint:'CON(@uid1, @uid2)'},
   {key:'REC', label:'Recalculate', desc:'Change the active framework mapping', hint:'REC(housing)'},
+  {key:'SOURCE', label:'Source', desc:'View claim provenance and epistemic modes', hint:'SOURCE(@uid.field)'},
 ];
 
 let acSel = 0;
@@ -1496,8 +2162,11 @@ function acSuggest(raw, cursor) {
     const q = inner.toLowerCase();
     return [
       acItem('table', 'table:', 'table:name', 'Create a new custom table', '', null, 'Insert'),
+      acItem('entity', 'resource:', 'resource:"name"', 'Create a new resource', '', null, 'Insert'),
+      acItem('entity', 'team:', 'team:"name"', 'Create a new team', '', null, 'Insert'),
+      acItem('entity', 'schema:', 'schema:"Field Name"', 'Add a new schema field', '', null, 'Insert'),
       acItem('entity', '@', '@uid', 'Create a new entity record', '', null, 'Insert'),
-    ].filter(o => o.insert.toLowerCase().includes(q) || q.length === 0);
+    ].filter(o => o.insert.toLowerCase().includes(q) || o.display.toLowerCase().includes(q) || q.length === 0);
   }
 
   // --- SIG / ALT / NUL / SUP ---
@@ -1519,10 +2188,19 @@ function acSuggest(raw, cursor) {
 
   // --- CON ---
   if (op === 'CON') {
-    const afterComma = inner.match(/^[^,]*,\s*(@?\w*)$/);
-    if (afterComma) return entityItems(afterComma[1], '', 'Link to');
+    const afterComma = inner.match(/^[^,]*,\s*(.*)$/);
+    if (afterComma) {
+      const q2=afterComma[1];
+      return [...entityItems(q2, '', 'Link to'),
+        ...Object.keys(liveResources).filter(r=>r.includes(q2)).map(r=>acItem('entity',r,'#'+r,liveResources[r]?.name||r,'resource',null,'Resources')),
+      ];
+    }
     const q = inner;
-    return entityItems(q, ', ', 'Records');
+    return [
+      ...entityItems(q, ', ', 'Records'),
+      ...Object.keys(liveResources).filter(r=>r.toLowerCase().includes(q.toLowerCase())).map(r=>acItem('entity',r+', ',liveResources[r]?.name||r,r,'resource',null,'Resources')),
+      ...Object.keys(liveTeams).filter(t=>t.toLowerCase().includes(q.toLowerCase())).map(t=>acItem('entity',t+', ',liveTeams[t]?.name||t,t,'team',null,'Teams')),
+    ];
   }
 
   return [];
