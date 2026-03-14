@@ -1051,14 +1051,10 @@ window.showCtx=(e,fk)=>{
       </div>`;
   }
 
-  // Definitions table
-  const defTable=buildDefTable(fk);
-
   d.innerHTML=`<div class="ctx-label">${esc(f.label)} <span style="font-size:8px;color:${f.layer==='meant'?'var(--meant)':'#78716c'}">${f.layer}</span></div>
     <div class="ctx-def">${esc(f.def)}</div>${extra}${policyH}
     <div class="ctx-sep"></div>
-    <div class="ctx-section">All Definitions</div>
-    ${defTable}
+    <div class="ctx-item" onclick="activeTab='definitions';closeCtx();render()">View all definitions →</div>
     <div class="ctx-item" onclick="closeCtx()">Close</div>`;
   posCtx(d,e);
 };
