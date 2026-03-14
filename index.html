@@ -167,8 +167,10 @@ td .ha{display:none;position:absolute;right:4px;top:50%;transform:translateY(-50
 
 /* Summary cards */
 .p-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0 0}
-.p-card{border:1px solid var(--bdl);border-radius:var(--r);padding:12px 14px;background:#fff}
+.p-card{border:1px solid var(--bdl);border-radius:var(--r);padding:12px 14px;background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+.p-card:hover{border-color:var(--bd);box-shadow:0 1px 4px rgba(0,0,0,.08);background:#fafaf8}
 .p-card.contested{border-color:var(--dbd);background:linear-gradient(to bottom,var(--dbg),#fff 40%)}
+.p-card.contested:hover{border-color:var(--danger);box-shadow:0 1px 4px rgba(185,28,28,.12)}
 .p-card-label{font-size:10px;font-weight:600;color:var(--txm);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .p-card-value{font-size:15px;font-weight:600;line-height:1.3;margin-bottom:2px}
 .p-card-meta{font-size:10px;color:var(--txf)}
